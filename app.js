@@ -1,3 +1,4 @@
+var _ = require('underscore');
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -62,14 +63,17 @@ MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err,
         console.dir("Documents found!");
         console.dir(docs);
         
-        if (docs != null){
+        if (docs != null) {
           for (var doc in docs) {
             var linksId = docs[doc]["Links"];
-            var urlsArr =new Array(linksId.length);
-            getUrlsFromSearchResults(function(linksId, urlsArr){
+            //var urlsArr =new Array(linksId.length);
+            /*var urlsArr = */
+            getUrlsFromSearchResults(linksId, function (urlsArr) {
+              // getUrlsFromSearchResults(function(linksId, urlsArr){
               console.dir(urlsArr[0]);
+              res.render('index', {searchResults: urlsArr});
             });
-            res.render('index', {searchResults: urlsArr});}
+          }
         } else{
           //goto robot
         }
@@ -137,18 +141,29 @@ module.exports = app;
 //   return arrLinks;
 // };
 
-var getUrlsFromSearchResults = function(linksId, callback){
+ function getUrlsFromSearchResults(linksId, onResults){
   var arrLinks = new Array(linksId.length);
   MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err, db) {
     if (err) throw err;
-    for (i = 0; i < linksId.length; i++) {
-      db.collection('Links').find({_id: new ObjectID(linksId[i])}).toArray(function (err, doc) {
+    var mongoIds = [];
+    linksId.forEach(function(id){
+      mongoIds.push(new ObjectID(id));
+    });
+    //for (i = 0; i < linksId.length; i++) {
+      db.collection('Links').find({_id: { $in: mongoIds}}).toArray(function (err, doc) {
         if (err) throw err;
         // console.dir(doc);
-        arrLinks[i]= doc[0]['Link'];
-        console.dir(arrLinks[i]);
-      })
-    }
-    callback (arrLinks);
+        arrLinks = _.map(doc, function(item) {
+          return item['Link'];
+        });
+
+        //arrLinks[i]= doc[0]['Link'];
+        //console.dir(arrLinks[i]);
+        //console.log("AAAAA");
+        onResults(arrLinks);
+      });
+    //}
+
   });
+   return arrLinks;
 };
