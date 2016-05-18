@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var mongodb = require('mongodb').MongoClient;
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 var hbs = require('hbs');
@@ -14,6 +15,11 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
+
+
+var db1;
+var coll1;
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -60,9 +66,9 @@ MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err,
           for (var doc in docs) {
             var linksId = docs[doc]["Links"];
             var urlsArr =new Array(linksId.length);
-            urlsArr = getUrlsFromSearchResults(linksId);
-            //console.dir(getUrlsFromSearchResults(links));
-            //console.dir(urlsArr);
+            getUrlsFromSearchResults(function(linksId, urlsArr){
+              console.dir(urlsArr[0]);
+            });
             res.render('index', {searchResults: urlsArr});}
         } else{
           //goto robot
@@ -107,9 +113,32 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+//
+// function getUrlsFromSearchResults(linksId){
+//   var arrLinks = new Array(linksId.length);
+//
+//   MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err, db)
+//   {
+//     //if (err) throw err;
+//     assert.equal(null,err);
+//     db1 = db;
+//     coll1 = db.collection('Links');
+//   });
+//       for (var i = 0; i < linksId.length; i++)
+//       {
+//         coll1.find({_id: new ObjectID(linksId[i])}).toArray(function (err, doc)
+//         {
+//           if (err) throw err;
+//             arrLinks[i] = doc[0]['Link'];
+//         });
+//       }
+//
+//   console.dir(arrLinks[2]);
+//   return arrLinks;
+// };
 
-function getUrlsFromSearchResults(linksId){
-  arrLinks = new Array(linksId.length);
+var getUrlsFromSearchResults = function(linksId, callback){
+  var arrLinks = new Array(linksId.length);
   MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err, db) {
     if (err) throw err;
     for (i = 0; i < linksId.length; i++) {
@@ -118,8 +147,8 @@ function getUrlsFromSearchResults(linksId){
         // console.dir(doc);
         arrLinks[i]= doc[0]['Link'];
         console.dir(arrLinks[i]);
-        })
-      }
+      })
+    }
+    callback (arrLinks);
   });
-  return arrLinks;
 };
