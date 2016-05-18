@@ -16,8 +16,8 @@ var users = require('./routes/users');
 var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
+app.set('views', __dirname + '/views');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -45,40 +45,54 @@ MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err,
       next(Error('Please insert search string!'));
     }
 
-    db.collection('SearchStrings').find({'StringSearch': searchString}).toArray(function (err, docs) {
+    db.collection('SearchStrings').find({'StringSearch': searchString}, {_id: 0, Links: 1} ).toArray(function (err, docs) {
 
       if (err) throw err;
 
       if (docs.length < 1) {
         console.dir("No documents found.");
-        // return res.send("No documents found. Did you forget to mongorestore?");
       } else {
         console.dir("Documents found!");
-        console.dir(docs);
-        
-        if (docs != null){
-          for (var doc in docs) {
-            var linksId = docs[doc]["Links"];
-            var urlsArr =new Array(linksId.length);
-            urlsArr = getUrlsFromSearchResults(linksId);
-            //console.dir(getUrlsFromSearchResults(links));
-            //console.dir(urlsArr);
-            res.render('index', {searchResults: urlsArr});}
-        } else{
-          //goto robot
-        }
       }
 
+      for (var doc in docs) {
+          var linksId = docs[doc]["Links"];
+      }
+        /**
+         * Find 'Link' for each SearchString Id.
+         */
+        var arrUrls =  [];
+        for (i = 0; i < linksId.length; i++) {
+
+        db.collection('Links').find({'_id': new ObjectID(linksId[i])}).toArray(function (err, documents) {
+          if (err) throw err;
+
+          if (documents.length < 1) {
+            console.dir("No Links were found.");
+          } else {
+              url = documents[0]['Link'];
+              console.log(url);
+              arrUrls.push(url);
+          }
+        });
+      } //End for loop.
+        
+        console.log ("******************************************************");
+        for (i=0; i < 10 ; i++)
+        {
+            console.log(arrUrls[i]);
+        }
+        res.render('index',{searchResults: 'q'});
+    }); //End for db.collection('SearchStrings')
+
+  });//End for app-post
+
+    // catch 404 and forward to error handler
+    app.use(function(req, res, next) {
+        var err = new Error('Not Found');
+        err.status = 404;
+        next(err);
     });
-
-  });
-
-   // catch 404 and forward to error handler
-  app.use(function(req, res, next) {
-    var err = new Error('Not Found');
-    err.status = 404;
-    next(err);
-  });
 
 });
 
@@ -108,18 +122,28 @@ app.use(function(err, req, res, next) {
 
 module.exports = app;
 
-function getUrlsFromSearchResults(linksId){
-  arrLinks = new Array(linksId.length);
-  MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err, db) {
-    if (err) throw err;
-    for (i = 0; i < linksId.length; i++) {
-      db.collection('Links').find({_id: new ObjectID(linksId[i])}).toArray(function (err, doc) {
-        if (err) throw err;
-        // console.dir(doc);
-        arrLinks[i]= doc[0]['Link'];
-        console.dir(arrLinks[i]);
-        })
-      }
-  });
-  return arrLinks;
-};
+
+
+// function getUrlsFromSearchResults(linksId, callback) {
+//   arrLinks = [];
+//
+//
+//   MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err, db) {
+//     if (err) throw err;
+//
+//
+//     for (i = 0; i < linksId.length; i++) {
+//        db.collection('Links').find( { _id: new ObjectID(linksId[i]) }).toArray(function(err, doc) {
+//         if (err) throw err;
+//         arrLinks.push(doc[0]['Link']);
+//         // console.log(arrLinks[1]);
+//       });
+//     }
+//     getUrlsFromSearchResults(arrLinks);
+//     console.log(arrLinks[3]);
+//
+//     return arrLinks;
+//   });
+// }
+//
+

@@ -1,18 +1,9 @@
-<head>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-
-<body>
   <img id="logo" src="../images/cook-logo.jpg" />
      <form action="/searchResults" method="post">
         <input id="search" name="search" type="search" />
         <input type="submit" value="search" />
-
-         <ul>
-             {{#each searchResults}}
-                 <li>{{this}}</li>
-             {{/each}}
-         </ul>
-
     </form>
-</body>
+
+ <ul>
+     <li>{{ searchResults }}</li>
+ </ul>
