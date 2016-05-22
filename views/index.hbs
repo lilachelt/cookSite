@@ -1,9 +1,19 @@
-  <img id="logo" src="../images/cook-logo.jpg" />
+
+<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+<img id="logo" src="../images/cook_logo2.jpg" />
      <form action="/searchResults" method="post">
-        <input id="search" name="search" type="search" />
-        <input type="submit" value="search" />
+         <div class = "searchLine">
+             <input id="search" name="search" type="search" />
+             <input id="searchBottom" type="submit" value="Cook It" />
+             <!--<img id="searchBottompic" src="../images/cookit_search.jpg" />-->
+         </div>
     </form>
 
- <ul>
-     <li>{{ searchResults }}</li>
+ <ul >
+     {{#each searchResults}}
+         <P>
+             <i class="fa fa-cutlery"></i>
+             <a id="linkResult" link href={{this}}>  {{this}} </a>
+         </P>
+     {{/each}}
  </ul>

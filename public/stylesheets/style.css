@@ -7,15 +7,51 @@ a {
 }
 
 #logo {
-  width: 20em;
+  width: 300px;
+  display: block;
   margin-left: auto;
-  margin-right: auto;
-}
+  margin-right: auto
 
+}
 #search {
   width: 50%;
   height: 2rem;
-  margin: auto;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  display:inline-block;
 }
 
+
+#searchBottom {
+  width: 9%;
+  height: 26px;
+  display:inline-block;
+  display: block;
+  color:darkred;
+  padding: 0 16px 0 38px;
+  font-size: 18px;
+  line-height: 46px;
+  box-shadow: none;
+  font-family: "Nightclub BTN";
+
+
+}
+
+/*#searchBottompic*/
+/*{*/
+  /*width: 95px;*/
+  /*height: 50px;*/
+  /*display:inline-block;*/
+  /**/
+/*}*/
+
+#linkResult
+{
+  color: midnightblue;
+}
+#linkResult:hover
+{
+  color:red;
+}
 

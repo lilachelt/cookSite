@@ -17,11 +17,6 @@ var users = require('./routes/users');
 
 var app = express();
 
-
-var db1;
-var coll1;
-
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
@@ -48,39 +43,30 @@ MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err,
   app.post('/searchResults', function(req, res, next) {
     searchString = req.body.search;
 
+
     if (typeof searchString == 'undefined'){
       next(Error('Please insert search string!'));
     }
 
+    req.body.search= searchString;
     db.collection('SearchStrings').find({'StringSearch': searchString}).toArray(function (err, docs) {
 
       if (err) throw err;
 
       if (docs.length < 1) {
         console.dir("No documents found.");
-        // return res.send("No documents found. Did you forget to mongorestore?");
+        //goto robot
       } else {
         console.dir("Documents found!");
-        console.dir(docs);
-        
-        if (docs != null) {
-          for (var doc in docs) {
-            var linksId = docs[doc]["Links"];
-            //var urlsArr =new Array(linksId.length);
-            /*var urlsArr = */
-            getUrlsFromSearchResults(linksId, function (urlsArr) {
-              // getUrlsFromSearchResults(function(linksId, urlsArr){
-              console.dir(urlsArr[0]);
+        for (var doc in docs) {
+          var linksId = docs[doc]["Links"];
+          getUrlsFromSearchResults(linksId, function (urlsArr) {
               res.render('index', {searchResults: urlsArr});
+
             });
           }
-        } else{
-          //goto robot
-        }
       }
-
     });
-
   });
 
    // catch 404 and forward to error handler
@@ -117,29 +103,6 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
-//
-// function getUrlsFromSearchResults(linksId){
-//   var arrLinks = new Array(linksId.length);
-//
-//   MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err, db)
-//   {
-//     //if (err) throw err;
-//     assert.equal(null,err);
-//     db1 = db;
-//     coll1 = db.collection('Links');
-//   });
-//       for (var i = 0; i < linksId.length; i++)
-//       {
-//         coll1.find({_id: new ObjectID(linksId[i])}).toArray(function (err, doc)
-//         {
-//           if (err) throw err;
-//             arrLinks[i] = doc[0]['Link'];
-//         });
-//       }
-//
-//   console.dir(arrLinks[2]);
-//   return arrLinks;
-// };
 
  function getUrlsFromSearchResults(linksId, onResults){
   var arrLinks = new Array(linksId.length);
@@ -149,21 +112,13 @@ module.exports = app;
     linksId.forEach(function(id){
       mongoIds.push(new ObjectID(id));
     });
-    //for (i = 0; i < linksId.length; i++) {
       db.collection('Links').find({_id: { $in: mongoIds}}).toArray(function (err, doc) {
         if (err) throw err;
-        // console.dir(doc);
         arrLinks = _.map(doc, function(item) {
           return item['Link'];
         });
-
-        //arrLinks[i]= doc[0]['Link'];
-        //console.dir(arrLinks[i]);
-        //console.log("AAAAA");
         onResults(arrLinks);
       });
-    //}
-
   });
    return arrLinks;
 };
