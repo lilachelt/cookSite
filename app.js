@@ -14,6 +14,8 @@ var ObjectID = require('mongodb').ObjectID;
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var searchResults = require('./routes/searchResults');
+
 
 var app = express();
 
@@ -31,6 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
+app.use('/searchResults', searchResults);
 
 MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err, db) {
 
