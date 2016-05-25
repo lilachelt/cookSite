@@ -14,7 +14,7 @@ var ObjectID = require('mongodb').ObjectID;
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
-var searchResults = require('./routes/searchResults');
+var search = require('./routes/search');
 
 
 var app = express();
@@ -33,7 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
-app.use('/searchResults', searchResults);
+app.use('/search', search);
 
 MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err, db) {
 
@@ -43,9 +43,8 @@ MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err,
 
   console.log("Successfully connected to MongoDB.");
 
-  app.post('/searchResults', function(req, res, next) {
+  app.post('/', function(req, res, next) {
     searchString = req.body.search;
-
 
     if (typeof searchString == 'undefined'){
       next(Error('Please insert search string!'));
@@ -64,7 +63,7 @@ MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err,
         for (var doc in docs) {
           var linksId = docs[doc]["Links"];
           getUrlsFromSearchResults(linksId, function (urlsArr) {
-              res.render('index', {searchResults: urlsArr});
+              res.render('index', {searchKeyWord: searchString, searchResults: urlsArr});
 
             });
           }

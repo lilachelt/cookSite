@@ -6,6 +6,13 @@
     right: 380px;
 }
 
+#logo_searchline_wrapper {
+    border-color: #0000FF;
+    border: 3px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
 #searchLine
 {
     width: 45%;
@@ -13,8 +20,8 @@
     display: block;
     display:inline-block;
     position: relative;
-    left: 100px;
-    bottom:180px;
+    left: 11%;
+    bottom:20%;
 }
 
 #searchBottom
