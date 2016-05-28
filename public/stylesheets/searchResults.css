@@ -1,43 +1,108 @@
-#logo {
-    width: 120px;
-    display: block;
+/*general*/
+body
+{
+    font-size: 0.9rem;
+    font-family: "Ktav Yad CLM", "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, sans-serif
+}
+
+#container {
     margin-left: auto;
-    position: relative;
-    right: 380px;
+    margin-right: auto;
+}
+
+.inline_block_display {
+    display: inline-block;
+}
+
+.center {
+    /*text-align: center;*/
 }
 
 #logo_searchline_wrapper {
     border-color: #0000FF;
-    border: 3px;
+    border: 8px;
     margin-right: auto;
     margin-left: auto;
+    text-align: center;
+}
+
+#logo {
+    max-width:10%;
+    min-width:10%;
+
+    /*!*display: block;*!*/
+    /*!*position: relative;*!*/
+    /*right: 20%;*/
 }
 
 #searchLine
 {
     width: 45%;
-    height: 2rem;
-    display: block;
-    display:inline-block;
-    position: relative;
-    left: 11%;
-    bottom:20%;
+    /*height: 2rem;*/
+    /*position: relative;*/
+    /*left: 11%;*/
 }
 
 #searchBottom
 {
     width:8%;
-    height: 2rem;
-    position: relative;
-    left: -10px;
-    bottom:180px;
+    /*height: 2rem;*/
+    /*position: relative;*/
+    /*left: 7%;*/
 }
 
-#recipeIcon
-{
-    width: 11%;
-    position: relative;
-    bottom:10px;
-    left: 140px;
-
+#recipes_results_wrapper {
+    border-color: #0000FF;
+    border: 15px;
+    text-align: center;
 }
+
+.square_recipe {
+    display: inline-block;
+    width: 30%;
+    min-height: 14rem;
+    max-height: 14rem;
+    border-radius: 25px;
+    border: 2px dotted dodgerblue;
+    background:#cccccc;
+    margin: 1%;
+    text-align: right;
+    overflow: hidden;
+}
+
+.recipe-title {
+    text-align: center;
+    border-bottom: 2px solid dodgerblue;
+}
+
+.groceries {
+    width: 50%;
+    margin: 0;
+}
+
+.recipe-image {
+    /*position: absolute;*/
+    width: 50%;
+    /*overflow: hidden;*/
+    /*width: 20%;*/
+}
+
+.recipe-image img {
+    /*width: inherit;*/
+    /*text-align: left;*/
+}
+
+
+ul{
+    list-style-type: none;
+    text-align:center;
+    padding-right: 0.6rem;
+}
+
+li{
+    text-align: right;
+}
+
+
+
+
