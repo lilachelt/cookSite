@@ -29,26 +29,18 @@ body
 #logo {
     max-width:10%;
     min-width:10%;
-
-    /*!*display: block;*!*/
-    /*!*position: relative;*!*/
-    /*right: 20%;*/
 }
 
 #searchLine
 {
     width: 45%;
-    /*height: 2rem;*/
-    /*position: relative;*/
-    /*left: 11%;*/
 }
 
 #searchBottom
 {
+    position: relative;
+    left: 46%;
     width:8%;
-    /*height: 2rem;*/
-    /*position: relative;*/
-    /*left: 7%;*/
 }
 
 #recipes_results_wrapper {
@@ -86,6 +78,14 @@ body
     /*overflow: hidden;*/
     /*width: 20%;*/
 }
+
+#recipeLinkBottom
+{
+    position: relative;
+    left: 46%;
+    width:8%;
+}
+
 
 .recipe-image img {
     /*width: inherit;*/
