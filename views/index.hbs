@@ -1,9 +1,18 @@
-<img id="logo" src="../images/cook_logo2.jpg" />
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="stylesheets/searchResults.css">
+</head>
+<body>
      <form action="/searchResults" method="post">
          <div class = "searchLine">
-             <input id="search" name="search" type="search" />
-             <input id="searchBottom" type="submit" value="Cook It" />
-             <!--<img id="searchBottompic" src="../images/cookit_search.jpg" />-->
+             <img id="logo" src="images\logo.jpg">
+             <div class="inline_display">
+                 <input id="searchLine" name="search" type="search" />
+                 <input id="searchBottom" type="submit" value="Cook It" />
+             </div>
          </div>
     </form>
 
@@ -15,3 +24,5 @@
          </P>
      {{/each}}
  </ul>
+</body>
+</html>
