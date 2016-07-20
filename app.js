@@ -34,6 +34,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 app.use('/search', search);
+app.use('/searchResults', search);
 
 MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err, db) {
 
@@ -44,7 +45,7 @@ MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err,
   console.log("Successfully connected to MongoDB.");
 
   app.post('/', function(req, res, next) {
-    searchString = req.body.search;
+    var searchString = req.body.search;
 
     if (typeof searchString == 'undefined'){
       next(Error('Please insert search string!'));
