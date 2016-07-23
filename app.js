@@ -70,7 +70,7 @@ MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err,
                     console.log(docs[doc]["Links"]);
 
                     getUrlsFromSearchResults(linksId, function (titlesurlsArr) {
-                        res.render('index', {searchKeyWord: searchString, searchResults: titlesurlsArr});
+                        res.render('search', {searchKeyWord: searchString, searchResults: titlesurlsArr});
 
                     }
                     );
