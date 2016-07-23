@@ -34,7 +34,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 app.use('/search', search);
-app.use('/searchResults', search);
 
 MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err, db) {
 
@@ -47,30 +46,38 @@ MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err,
   app.post('/', function(req, res, next) {
     var searchString = req.body.search;
 
-    if (typeof searchString == 'undefined'){
-      next(Error('Please insert search string!'));
-    }
+      //TODO delete links after
+    if (searchString != '') {
+        // next(Error('Please insert search string!'));
 
-    req.body.search= searchString;
-    db.collection('SearchStrings').find({'StringSearch': searchString}).toArray(function (err, docs) {
+        /**
+         * Show the search key word in the search box after 'search' button clicked.
+         */
+        req.body.search = searchString;
 
-      if (err) throw err;
 
-      if (docs.length < 1) {
-        console.dir("No documents found.");
-        //goto robot
-      } else {
-        console.dir("Documents found!");
-        for (var doc in docs) {
-          var linksId = docs[doc]["Links"];
-          getUrlsFromSearchResults(linksId, function (urlsArr) {
-              res.render('index', {searchKeyWord: searchString, searchResults: urlsArr});
+        db.collection('SearchStrings').find({'StringSearch': searchString}).toArray(function (err, docs) {
 
-            });
-          }
-      }
-    });
-  });
+            if (err) throw err;
+
+            if (docs.length < 1) {
+                console.dir("No documents found.");
+                //goto robot
+            } else {
+                console.dir("Documents found!");
+                for (var doc in docs) {
+                    var linksId = docs[doc]["Links"];
+                    console.log(docs[doc]["Links"]);
+
+                    getUrlsFromSearchResults(linksId, function (titlesurlsArr) {
+                        res.render('index', {searchKeyWord: searchString, searchResults: titlesurlsArr});
+
+                    }
+                    );
+                }
+            }
+        });
+    }});
 
    // catch 404 and forward to error handler
   app.use(function(req, res, next) {
@@ -107,21 +114,34 @@ app.use(function(err, req, res, next) {
 
 module.exports = app;
 
- function getUrlsFromSearchResults(linksId, onResults){
+ function getUrlsFromSearchResults(linksId, /*onResultsUrls,*/ onResultsTitles){
   var arrLinks = new Array(linksId.length);
+  var arrTitleLinks = new Array(linksId.length);
   MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err, db) {
     if (err) throw err;
     var mongoIds = [];
     linksId.forEach(function(id){
       mongoIds.push(new ObjectID(id));
     });
-      db.collection('Links').find({_id: { $in: mongoIds}}).toArray(function (err, doc) {
-        if (err) throw err;
-        arrLinks = _.map(doc, function(item) {
-          return item['Link'];
-        });
-        onResults(arrLinks);
+      // db.collection('Links').find({_id: { $in: mongoIds}}).toArray(function (err, doc) {
+      //   if (err) throw err;
+      //   arrLinks = _.map(doc, function(item) {
+      //     return item['Link'];
+      //   });
+      //   onResultsUrls(arrLinks);
+      // });
+
+      db.collection ('Links').find({_id: { $in: mongoIds}}).toArray(function (err,doc) {
+          if (err) throw err;
+      arrTitleLinks =  _.map (doc, function(item)
+          {
+              return item['Title']
+          }
+      );
+          onResultsTitles(arrTitleLinks);
       });
+
   });
-   return arrLinks;
+   //return arrLinks;
+     return arrTitleLinks;
 };
