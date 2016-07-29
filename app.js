@@ -54,12 +54,9 @@ MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err,
          * Show the search key word in the search box after 'search' button clicked.
          */
         req.body.search = searchString;
-
-
         db.collection('SearchStrings').find({'StringSearch': searchString}).toArray(function (err, docs) {
 
             if (err) throw err;
-
             if (docs.length < 1) {
                 console.dir("No documents found.");
                 //goto robot
@@ -67,12 +64,21 @@ MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err,
                 console.dir("Documents found!");
                 for (var doc in docs) {
                     var linksId = docs[doc]["Links"];
-                    console.log(docs[doc]["Links"]);
-
-                    getUrlsFromSearchResults(linksId, function (titlesurlsArr) {
-                        res.render('search', {searchKeyWord: searchString, titleResults: titlesurlsArr});
-
+                    // console.log(docs[doc]["Links"]);
+                    var collectionName = 'Links';
+                    var itemName = 'Title';
+                    /**
+                     * get all the titles using links ID from collection 'Links'
+                     */
+                    // var onResult=[];
+                    // getDataFromDbUsingLinksId(linksId,db,'Links','Link',function(onResult){});
+                    // console.log(onResult);
+                    getDataFromDbUsingLinksId(linksId,db,collectionName,itemName,function (titlesUrlsArr) {
+                        res.render('search', {searchKeyWord: searchString, titleResults: titlesUrlsArr});
                     }
+
+                        //TODO enable search from the search page
+                        //TODO connect urls to titles
                     );
                 }
             }
@@ -114,34 +120,32 @@ app.use(function(err, req, res, next) {
 
 module.exports = app;
 
- function getUrlsFromSearchResults(linksId, /*onResultsUrls,*/ onResultsTitles){
-  var arrLinks = new Array(linksId.length);
-  var arrTitleLinks = new Array(linksId.length);
-  MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err, db) {
-    if (err) throw err;
+function getDataFromDbUsingLinksId(linksId,db,collectionName,itemName,onResults){
+    var arrDataLinks = new Array(linksId.length);
     var mongoIds = [];
     linksId.forEach(function(id){
-      mongoIds.push(new ObjectID(id));
+        mongoIds.push(new ObjectID(id));
     });
-      // db.collection('Links').find({_id: { $in: mongoIds}}).toArray(function (err, doc) {
-      //   if (err) throw err;
-      //   arrLinks = _.map(doc, function(item) {
-      //     return item['Link'];
-      //   });
-      //   onResultsUrls(arrLinks);
-      // });
+    db.collection (collectionName).find({_id: { $in: mongoIds}}).toArray(function (err,doc) {
+        if (err) throw err;
+        arrDataLinks =  _.map (doc, function(item)
+            {
+                return item[itemName]
+            }
+        );
+        onResults(arrDataLinks);
+    });
+    return arrDataLinks;
+}
 
-      db.collection ('Links').find({_id: { $in: mongoIds}}).toArray(function (err,doc) {
-          if (err) throw err;
-      arrTitleLinks =  _.map (doc, function(item)
-          {
-              return item['Title']
-          }
-      );
-          onResultsTitles(arrTitleLinks);
-      });
+function createArray(length) {
+    var arr = new Array(length || 0),
+        i = length;
 
-  });
-   //return arrLinks;
-     return arrTitleLinks;
-};
+    if (arguments.length > 1) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        while(i--) arr[length-1 - i] = createArray.apply(this, args);
+    }
+
+    return arr;
+}
