@@ -53,7 +53,8 @@ MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err,
         /**
          * Show the search key word in the search box after 'search' button clicked.
          */
-        req.body.search = searchString;
+        req.body.search = searchString
+
         db.collection('SearchStrings').find({'StringSearch': searchString}).toArray(function (err, docs) {
 
             if (err) throw err;
@@ -70,16 +71,21 @@ MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err,
                  * get all the titles using links ID from collection 'Links'
                  */
                 getDataFromDbUsingLinksId(linksId, db,'Links','Title', '_id' ,function(titlesUrlsArr) {
-                    console.log(titlesUrlsArr);
+                    //console.log(titlesUrlsArr);
 
                     getDataFromDbUsingLinksId(linksId, db,'Links','Link', '_id', function(linksUrlsArr){
 
                         getDataFromDbUsingLinksId(linksId, db,'LinksToWords','Words', 'Link', function(ingredientsIdArr) {
-                            console.log(linksUrlsArr);
+                            //console.log(linksUrlsArr);
 
                             ingredientsIdArr.forEach(function(entry){
                                 getDataFromDbUsingLinksId(entry,db,'Ingredients','Word', '_id', function(ingredientsNames) {
-                                    console.log(ingredientsNames);
+
+                                });
+
+                                mergeArraysToOneArray(titlesUrlsArr,linksUrlsArr,entry, function(arrayDataResult)
+                                {
+
                                 });
 
 
@@ -155,4 +161,19 @@ function getDataFromDbUsingLinksId(linksId, db, collectionName, itemName, search
     });
 
     return arrDataLinks;
+}
+
+function mergeArraysToOneArray(titlesUrlsArr,linksUrlsArr,ingredientsIdArr, arrayDataResult)
+{
+    var arrResult = new Array(linksUrlsArr.length).fill(new Array(3));
+
+    for (var i=0; i< linksUrlsArr.length; i++)
+    {
+        arrResult[i][0] =titlesUrlsArr[i];
+        arrResult[i][1] = linksUrlsArr[i];
+        arrResult [i] [2] = ingredientsIdArr[i];
+
+        console.log(arrResult[i]);
+    }
+    arrayDataResult(arrResult);
 }
