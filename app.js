@@ -64,23 +64,31 @@ MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err,
                 console.dir("Documents found!");
                 for (var doc in docs) {
                     var linksId = docs[doc]["Links"];
-                    // console.log(docs[doc]["Links"]);
-                    var collectionName = 'Links';
-                    var itemName = 'Title';
-                    /**
-                     * get all the titles using links ID from collection 'Links'
-                     */
-                    // var onResult=[];
-                    // getDataFromDbUsingLinksId(linksId,db,'Links','Link',function(onResult){});
-                    // console.log(onResult);
-                    getDataFromDbUsingLinksId(linksId,db,collectionName,itemName,function (titlesUrlsArr) {
-                        res.render('search', {searchKeyWord: searchString, titleResults: titlesUrlsArr});
-                    }
-
-                        //TODO enable search from the search page
-                        //TODO connect urls to titles
-                    );
                 }
+
+                /**
+                 * get all the titles using links ID from collection 'Links'
+                 */
+                getDataFromDbUsingLinksId(linksId, db,'Links','Title', '_id' ,function(titlesUrlsArr) {
+                    console.log(titlesUrlsArr);
+
+                    getDataFromDbUsingLinksId(linksId, db,'Links','Link', '_id', function(linksUrlsArr){
+
+                        getDataFromDbUsingLinksId(linksId, db,'LinksToWords','Words', 'Link', function(ingredientsIdArr) {
+                            console.log(linksUrlsArr);
+
+                            ingredientsIdArr.forEach(function(entry){
+                                getDataFromDbUsingLinksId(entry,db,'Ingredients','Word', '_id', function(ingredientsNames) {
+                                    console.log(ingredientsNames);
+                                });
+
+
+
+                                //res.render('search', {searchKeyWord: searchString, titleResults: titlesUrlsArr});\
+                            });
+                        });
+                    });
+                });
             }
         });
     }});
@@ -120,13 +128,23 @@ app.use(function(err, req, res, next) {
 
 module.exports = app;
 
-function getDataFromDbUsingLinksId(linksId,db,collectionName,itemName,onResults){
+function getDataFromDbUsingLinksId(linksId, db, collectionName, itemName, searchParam, onResults) {
+
     var arrDataLinks = new Array(linksId.length);
     var mongoIds = [];
-    linksId.forEach(function(id){
-        mongoIds.push(new ObjectID(id));
-    });
-    db.collection (collectionName).find({_id: { $in: mongoIds}}).toArray(function (err,doc) {
+    var query = {};
+
+    if (searchParam == '_id') {
+        linksId.forEach(function(id){
+            mongoIds.push(new ObjectID(id));
+        });
+    } else {
+        mongoIds = linksId;
+    }
+
+    query[searchParam] = { $in: mongoIds };
+
+    db.collection (collectionName).find(query).toArray(function (err,doc) {
         if (err) throw err;
         arrDataLinks =  _.map (doc, function(item)
             {
@@ -135,17 +153,6 @@ function getDataFromDbUsingLinksId(linksId,db,collectionName,itemName,onResults)
         );
         onResults(arrDataLinks);
     });
+
     return arrDataLinks;
-}
-
-function createArray(length) {
-    var arr = new Array(length || 0),
-        i = length;
-
-    if (arguments.length > 1) {
-        var args = Array.prototype.slice.call(arguments, 1);
-        while(i--) arr[length-1 - i] = createArray.apply(this, args);
-    }
-
-    return arr;
 }
