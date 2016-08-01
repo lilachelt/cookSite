@@ -7,6 +7,7 @@
 </head>
 <body dir="rtl">
     <div id="container">
+        <a id="linkResult" href="www.walla.co.il"> test </a>
 
         <div id="logo_searchline_wrapper">
 
@@ -21,15 +22,17 @@
 
         <div id="recipes_results_wrapper">
             {{#each titleResults}}
+
                 <div class="square_recipe" >
                     <div class="recipe-title">
-                <P>
-                    <a id="linkResult" link href={{this}}> {{this}} </a>
-                </P>
-                    </div>  <!--End recipe-title-->
+
+                    <a id="linkResult" target="_blank" href="https://www.walla.co.il"> {{this}} </a>
+                </div>  <!--End recipe-title-->
                 </div> <!--End square_recipe-->
 
             {{/each}}
+
+
                     <!--<p class="title-groceries">מצרכים</p>-->
                     <!--<ul>-->
                         <!--<li>2 ביצים</li>-->

@@ -5,16 +5,17 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var mongodb = require('mongodb').MongoClient;
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 var hbs = require('hbs');
 var ObjectID = require('mongodb').ObjectID;
-var db = require('./mongo').getDb();
+
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var search = require('./routes/search');
-var autocomplete = require('./routes/autocomplete');
+
 
 var app = express();
 
@@ -33,16 +34,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 app.use('/search', search);
-app.use('/autocomplete',autocomplete);
 
+MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err, db) {
 
+  if(err) throw err;
 
-//MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err, db) {
-//    if(err) throw err;
-//
-//  assert.equal(null, err);
-//
-//  console.log("Successfully connected to MongoDB.");
+  assert.equal(null, err);
+
+  console.log("Successfully connected to MongoDB.");
 
   app.post('/', function(req, res, next) {
     var searchString = req.body.search;
@@ -54,12 +53,11 @@ app.use('/autocomplete',autocomplete);
         /**
          * Show the search key word in the search box after 'search' button clicked.
          */
-        req.body.search = searchString;
+        req.body.search = searchString
 
         db.collection('SearchStrings').find({'StringSearch': searchString}).toArray(function (err, docs) {
 
             if (err) throw err;
-
             if (docs.length < 1) {
                 console.dir("No documents found.");
                 //goto robot
@@ -67,14 +65,36 @@ app.use('/autocomplete',autocomplete);
                 console.dir("Documents found!");
                 for (var doc in docs) {
                     var linksId = docs[doc]["Links"];
-                    console.log(docs[doc]["Links"]);
-
-                    getUrlsFromSearchResults(linksId, function (titlesurlsArr) {
-                        res.render('search', {searchKeyWord: searchString, titleResults: titlesurlsArr});
-
-                    }
-                    );
                 }
+
+                /**
+                 * get all the titles using links ID from collection 'Links'
+                 */
+                getDataFromDbUsingLinksId(linksId, db,'Links','Title', '_id' ,function(titlesUrlsArr) {
+                    //console.log(titlesUrlsArr);
+
+                    getDataFromDbUsingLinksId(linksId, db,'Links','Link', '_id', function(linksUrlsArr){
+
+                        getDataFromDbUsingLinksId(linksId, db,'LinksToWords','Words', 'Link', function(ingredientsIdArr) {
+                            //console.log(linksUrlsArr);
+
+                            ingredientsIdArr.forEach(function(entry){
+                                getDataFromDbUsingLinksId(entry,db,'Ingredients','Word', '_id', function(ingredientsNames) {
+
+                                });
+
+                                mergeArraysToOneArray(titlesUrlsArr,linksUrlsArr,entry, function(arrayDataResult)
+                                {
+
+                                });
+
+
+
+                                //res.render('search', {searchKeyWord: searchString, titleResults: titlesUrlsArr});\
+                            });
+                        });
+                    });
+                });
             }
         });
     }});
@@ -86,7 +106,7 @@ app.use('/autocomplete',autocomplete);
     next(err);
   });
 
-//});
+});
 
 // error handlers
 
@@ -114,34 +134,46 @@ app.use(function(err, req, res, next) {
 
 module.exports = app;
 
- function getUrlsFromSearchResults(linksId, /*onResultsUrls,*/ onResultsTitles){
-  var arrLinks = new Array(linksId.length);
-  var arrTitleLinks = new Array(linksId.length);
-  MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err, db) {
-    if (err) throw err;
+function getDataFromDbUsingLinksId(linksId, db, collectionName, itemName, searchParam, onResults) {
+
+    var arrDataLinks = new Array(linksId.length);
     var mongoIds = [];
-    linksId.forEach(function(id){
-      mongoIds.push(new ObjectID(id));
+    var query = {};
+
+    if (searchParam == '_id') {
+        linksId.forEach(function(id){
+            mongoIds.push(new ObjectID(id));
+        });
+    } else {
+        mongoIds = linksId;
+    }
+
+    query[searchParam] = { $in: mongoIds };
+
+    db.collection (collectionName).find(query).toArray(function (err,doc) {
+        if (err) throw err;
+        arrDataLinks =  _.map (doc, function(item)
+            {
+                return item[itemName]
+            }
+        );
+        onResults(arrDataLinks);
     });
-      // db.collection('Links').find({_id: { $in: mongoIds}}).toArray(function (err, doc) {
-      //   if (err) throw err;
-      //   arrLinks = _.map(doc, function(item) {
-      //     return item['Link'];
-      //   });
-      //   onResultsUrls(arrLinks);
-      // });
 
-      db.collection ('Links').find({_id: { $in: mongoIds}}).toArray(function (err,doc) {
-          if (err) throw err;
-      arrTitleLinks =  _.map (doc, function(item)
-          {
-              return item['Title']
-          }
-      );
-          onResultsTitles(arrTitleLinks);
-      });
+    return arrDataLinks;
+}
 
-  });
-   //return arrLinks;
-     return arrTitleLinks;
-};
+function mergeArraysToOneArray(titlesUrlsArr,linksUrlsArr,ingredientsIdArr, arrayDataResult)
+{
+    var arrResult = new Array(linksUrlsArr.length).fill(new Array(3));
+
+    for (var i=0; i< linksUrlsArr.length; i++)
+    {
+        arrResult[i][0] =titlesUrlsArr[i];
+        arrResult[i][1] = linksUrlsArr[i];
+        arrResult [i] [2] = ingredientsIdArr[i];
+
+        console.log(arrResult[i]);
+    }
+    arrayDataResult(arrResult);
+}
