@@ -5,17 +5,16 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var mongodb = require('mongodb').MongoClient;
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 var hbs = require('hbs');
 var ObjectID = require('mongodb').ObjectID;
-
+var db = require('./mongo').getDb();
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var search = require('./routes/search');
-
+var autocomplete = require('./routes/autocomplete');
 
 var app = express();
 
@@ -34,14 +33,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 app.use('/search', search);
+app.use('/autocomplete',autocomplete);
 
-MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err, db) {
 
-  if(err) throw err;
 
-  assert.equal(null, err);
-
-  console.log("Successfully connected to MongoDB.");
+//MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err, db) {
+//    if(err) throw err;
+//
+//  assert.equal(null, err);
+//
+//  console.log("Successfully connected to MongoDB.");
 
   app.post('/', function(req, res, next) {
     var searchString = req.body.search;
@@ -54,7 +55,6 @@ MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err,
          * Show the search key word in the search box after 'search' button clicked.
          */
         req.body.search = searchString;
-
 
         db.collection('SearchStrings').find({'StringSearch': searchString}).toArray(function (err, docs) {
 
@@ -86,7 +86,7 @@ MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err,
     next(err);
   });
 
-});
+//});
 
 // error handlers
 
