@@ -71,28 +71,26 @@ MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err,
                  * get all the titles using links ID from collection 'Links'
                  */
                 getDataFromDbUsingLinksId(linksId, db,'Links','Title', '_id' ,function(titlesUrlsArr) {
-                    //console.log(titlesUrlsArr);
-
+                         // console.log(titlesUrlsArr);
                     getDataFromDbUsingLinksId(linksId, db,'Links','Link', '_id', function(linksUrlsArr){
+                          //  console.log(linksUrlsArr);
+                        getDataFromDbUsingLinksId(linksId, db,'Links','Ingredients', '_id', function(IngredientsIDArr){
+                                //console.log(IngredientsIDArr);
 
-                        getDataFromDbUsingLinksId(linksId, db,'LinksToWords','Words', 'Link', function(ingredientsIdArr) {
-                            //console.log(linksUrlsArr);
+                            getDataFromDbUsingLinksId(IngredientsIDArr, db,'LinksToWords','Words','_id',function(IDsIngredientsArr) {
+                                    //console.log(IDsIngredientsArr);
+                                buildIngredientsNamesArray(db, IDsIngredientsArr, function(ingredientsNames) {
+                                   // console.log(ingredientsNames);
 
-                            ingredientsIdArr.forEach(function(entry){
-                                getDataFromDbUsingLinksId(entry,db,'Ingredients','Word', '_id', function(ingredientsNames) {
+                                    mergeArraysToOneArray(db, titlesUrlsArr, linksUrlsArr, ingredientsNames, function(arrayDataResult) {
+                                        console.log('$' + arrayDataResult[0]);
+                                    });
 
                                 });
 
-                                mergeArraysToOneArray(titlesUrlsArr,linksUrlsArr,entry, function(arrayDataResult)
-                                {
-
-                                });
-
-
-
-                                //res.render('search', {searchKeyWord: searchString, titleResults: titlesUrlsArr});\
-                            });
+                             });
                         });
+                                //res.render('search', {searchKeyWord: searchString, titleResults: titlesUrlsArr});\
                     });
                 });
             }
@@ -163,17 +161,31 @@ function getDataFromDbUsingLinksId(linksId, db, collectionName, itemName, search
     return arrDataLinks;
 }
 
-function mergeArraysToOneArray(titlesUrlsArr,linksUrlsArr,ingredientsIdArr, arrayDataResult)
+
+function buildIngredientsNamesArray(db, ingredientsIdArr, callback) {
+    ingredientsNamesArr = [];
+
+    ingredientsIdArr.forEach(function(entry) {
+        getDataFromDbUsingLinksId(entry, db, 'Ingredients', 'Word', '_id', function(ingredientsNames) {
+            //console.log(ingredientsNames);
+            ingredientsNamesArr.push(ingredientsNames);
+
+        });
+    });
+    return ingredientsNamesArr;
+}
+
+
+
+function mergeArraysToOneArray(db, titlesUrlsArr, linksUrlsArr, ingredientsNamesArr, callback)
 {
-    var arrResult = new Array(linksUrlsArr.length).fill(new Array(3));
+    var arrResult = new Array(linksUrlsArr.length);
 
-    for (var i=0; i< linksUrlsArr.length; i++)
-    {
-        arrResult[i][0] =titlesUrlsArr[i];
+    for (var i=0; i < arrResult.length; i++) {
+        arrResult[i] = new Array(3);
+        arrResult[i][0] = titlesUrlsArr[i];
         arrResult[i][1] = linksUrlsArr[i];
-        arrResult [i] [2] = ingredientsIdArr[i];
-
-        console.log(arrResult[i]);
+        arrResult[i][2] = ingredientsNamesArr[i];
     }
-    arrayDataResult(arrResult);
+    callback(arrResult);
 }
