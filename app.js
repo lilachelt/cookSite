@@ -53,7 +53,7 @@ MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err,
         /**
          * Show the search key word in the search box after 'search' button clicked.
          */
-        req.body.search = searchString
+        req.body.search = searchString;
 
         db.collection('SearchStrings').find({'StringSearch': searchString}).toArray(function (err, docs) {
 
@@ -66,6 +66,7 @@ MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err,
                 for (var doc in docs) {
                     var linksId = docs[doc]["Links"];
                 }
+            }
 
                 /**
                  * get all the titles using links ID from collection 'Links'
@@ -81,9 +82,12 @@ MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err,
                                     //console.log(IDsIngredientsArr);
                                 buildIngredientsNamesArray(db, IDsIngredientsArr, function(ingredientsNames) {
                                    // console.log(ingredientsNames);
-
                                     mergeArraysToOneArray(db, titlesUrlsArr, linksUrlsArr, ingredientsNames, function(arrayDataResult) {
-                                        console.log('$' + arrayDataResult[0]);
+                                        console.log('$' + arrayDataResult);
+                                        console.log();
+
+                                    });
+
                                     });
 
                                 });
@@ -93,9 +97,8 @@ MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function(err,
                                 //res.render('search', {searchKeyWord: searchString, titleResults: titlesUrlsArr});\
                     });
                 });
-            }
-        });
-    }});
+        }
+  });
 
    // catch 404 and forward to error handler
   app.use(function(req, res, next) {
@@ -167,9 +170,9 @@ function buildIngredientsNamesArray(db, ingredientsIdArr, callback) {
 
     ingredientsIdArr.forEach(function(entry) {
         getDataFromDbUsingLinksId(entry, db, 'Ingredients', 'Word', '_id', function(ingredientsNames) {
-            //console.log(ingredientsNames);
+            console.log(ingredientsNames);
             ingredientsNamesArr.push(ingredientsNames);
-
+            callback(ingredientsNamesArr);
         });
     });
     return ingredientsNamesArr;
