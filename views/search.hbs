@@ -5,52 +5,35 @@
     <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="stylesheets/searchResults.css">
 </head>
+
 <body dir="rtl">
     <div id="container">
-        <a id="linkResult" href="www.walla.co.il"> test </a>
 
         <div id="logo_searchline_wrapper">
 
             <div class="inline_display">
                 <img id="logo" src="images\logo.jpg">
             </div>
+
             <div class="inline_display">
                 <input id="searchLine" name="search" type="search" />
                 <input id="searchBottom" type="submit" value="Cook It" />
             </div>
+
         </div> <!--End logo_searchline_wrapper-->
 
         <div id="recipes_results_wrapper">
-            {{#each titleResults}}
+            {{#each arrayDataResult}}
 
                 <div class="square_recipe" >
                     <div class="recipe-title">
-
-                    <a id="linkResult" target="_blank" href="https://www.walla.co.il"> {{this}} </a>
-                </div>  <!--End recipe-title-->
-                </div> <!--End square_recipe-->
-
+                        <a id="linkResult" target="_blank" href="{{this.[1]}}"> {{this.[0]}} </a>
+                        <p>{{this.[2]}}</p>
+                    </div>
+                </div>
             {{/each}}
 
-
-                    <!--<p class="title-groceries">מצרכים</p>-->
-                    <!--<ul>-->
-                        <!--<li>2 ביצים</li>-->
-                        <!--<li>150 ג' סוכר (שלושת רבעי כוס)    </li>-->
-                        <!--<li>כוס גזר מגורד  </li>-->
-                        <!--<li>140 ג' קמח תופח (כוס)</li>-->
-                        <!--<li>חצי כוס שמן</li>-->
-                        <!--<li>3 כפות סוכר חום</li>-->
-                        <!--<li>כפית קינמון-->
-                        <!--</li>-->
-                    <!--</ul>-->
-                <!--</div>-->
-                <!--<div class="recipe-image inline_block_display">-->
-                    <!--<img src="http://www.nikib.co.il/wp-content/uploads/SN851070-1.jpg">-->
-                <!--</div>-->
-
         </div><!--End recipes_results_wrapper-->
-
     </div> <!-- End container -->
 
 </body>
