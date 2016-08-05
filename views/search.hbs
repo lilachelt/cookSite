@@ -28,7 +28,16 @@
                 <div class="square_recipe" >
                     <div class="recipe-title">
                         <a id="linkResult" target="_blank" href="{{this.[1]}}"> {{this.[0]}} </a>
-                        <p>{{this.[2]}}</p>
+                        <p class="title-groceries">מצרכים</p>
+                        {{#each this.[3]}}
+                                <ul>
+                                    <li>{{this}}</li>
+                                </ul>
+                        {{/each}}
+
+                    </div>
+                    <div class="recipe-image inline_block_display">
+                        <img src={{this.[2]}}>
                     </div>
                 </div>
             {{/each}}

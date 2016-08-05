@@ -72,17 +72,39 @@ MongoClient.connect("mongodb://Vmedu94.mtacloud.co.il:27017/cook", function (err
                  * get all the titles using links ID from collection 'Links'
                  */
                 getDataFromDbUsingLinksId(linksId, db, 'Links', 'Title', '_id', function(titlesUrlsArr) {
+                    /**
+                     * get all the urls using links ID from collection 'Links'
+                     */
 
                     getDataFromDbUsingLinksId(linksId, db, 'Links', 'Link', '_id', function(linksUrlsArr) {
+                        /**
+                         * get all the Ingredients IDs using links ID from collection 'Links'
+                         */
 
-                        getDataFromDbUsingLinksId(linksId, db, 'Links', 'Ingredients', '_id', function(IngredientsIDArr) {
+                        getDataFromDbUsingLinksId(linksId, db, 'Links', 'ImagePath', '_id', function(LinksImages) {
+                            console.log(LinksImages);
+                            /**
+                             * get all the Ingredients IDs of each recipe using Ingredients ID from collection 'LinksToWords'
+                             */
 
-                            getDataFromDbUsingLinksId(IngredientsIDArr, db, 'LinksToWords', 'Words', '_id', function(IDsIngredientsArr) {
+                            getDataFromDbUsingLinksId(linksId, db, 'Links', 'Ingredients', '_id', function(IngredientsIDArr) {
 
-                                buildIngredientsNamesArray(db, IDsIngredientsArr, function (ingredientsNames) {
+                              getDataFromDbUsingLinksId(IngredientsIDArr, db, 'LinksToWords', 'Words', '_id', function(IDsIngredientsArr) {
 
-                                    mergeArraysToOneArray(db, titlesUrlsArr, linksUrlsArr, ingredientsNames, function(arrayDataResult) {
+                                buildIngredientsDetailsArray(db, IDsIngredientsArr, 'Word',function (ingredientsNames) {
+
+                                    buildIngredientsDetailsArray(db, IDsIngredientsArr, 'ImagePath',function (ingredientsImages) {
+
+                                    /**
+                                     * merge all the data to one big array in order to display it to web page
+                                     */
+
+                                    mergeArraysToOneArray(titlesUrlsArr, linksUrlsArr, LinksImages, ingredientsNames,ingredientsImages ,function(arrayDataResult) {
                                         res.render('search', {arrayDataResult: arrayDataResult});
+
+                                          });
+
+                                       });
                                     });
                                 });
                             });
@@ -159,35 +181,37 @@ function getDataFromDbUsingLinksId(linksId, db, collectionName, itemName, search
 }
 
 
-function buildIngredientsNamesArray(db, ingredientsIdArr, callback) {
+function buildIngredientsDetailsArray(db, ingredientsIdArr,searchParam, callback) {
 
-    ingredientsNamesArr = [];
+    ingredientsResultsArr = [];
     counter = 0;
     ingredientsIdArrLength = ingredientsIdArr.length;
 
     for (var i = 0; i < ingredientsIdArrLength; i++) {
 
-        getDataFromDbUsingLinksId(ingredientsIdArr[i], db, 'Ingredients', 'Word', '_id', function (ingredientsNames) {
+        getDataFromDbUsingLinksId(ingredientsIdArr[i], db, 'Ingredients', searchParam, '_id', function (ingredientsNames) {
             counter++;
 
-            ingredientsNamesArr.push(ingredientsNames);
+            ingredientsResultsArr.push(ingredientsNames);
 
             if (counter === ingredientsIdArrLength) {
-                callback(ingredientsNamesArr);
+                callback(ingredientsResultsArr);
             }
         });
     }
 }
 
 
-function mergeArraysToOneArray(db, titlesUrlsArr, linksUrlsArr, ingredientsNamesArr, callback) {
+function mergeArraysToOneArray(titlesUrlsArr, linksUrlsArr,LinksImages,ingredientsNamesArr,ingredientsImages, callback) {
     var arrResult = new Array(linksUrlsArr.length);
 
     for (var i = 0; i < arrResult.length; i++) {
-        arrResult[i] = new Array(3);
+        arrResult[i] = new Array(5);
         arrResult[i][0] = titlesUrlsArr[i];
         arrResult[i][1] = linksUrlsArr[i];
-        arrResult[i][2] = ingredientsNamesArr[i];
+        arrResult[i][2] = LinksImages[i];
+        arrResult[i][3] = ingredientsNamesArr[i];
+        arrResult[i][4] = ingredientsImages[i];
     }
 
     callback(arrResult);
