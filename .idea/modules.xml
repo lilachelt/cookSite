@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/cookSite.iml" filepath="$PROJECT_DIR$/cookSite.iml" />
-      <module fileurl="file://$USER_HOME$/Desktop/typeahead.js-master/typeahead.js-master.iml" filepath="$USER_HOME$/Desktop/typeahead.js-master/typeahead.js-master.iml" />
     </modules>
   </component>
 </project>
