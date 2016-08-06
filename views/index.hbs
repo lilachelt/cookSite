@@ -2,90 +2,54 @@
 <html>
 <head>
     <title>{{title}}</title>
-    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="stylesheets/searchResults.css">
+    <link rel="stylesheet" href="stylesheets/index.css">
 
-    <script type="application/javascript" src="js/jquery-1.12.4.min.js"></script>
-    <script type="application/javascript" src="js/typeahead.bundle.js"></script>
 </head>
 <body>
+
+<div id="container">
+
 <form action="" method="post">
-        <div id="formSearch">
-            <img id="logo" src="images/logo.jpg">
-            <div id="searchLine">
-                <input id="searchInput" name="search" type="text" class="typeahead" placeholder="Enter recipe Here" />
-                <input id="searchButton" type="submit" value="Cook It" />
-            </div>
+    <div id="logo_searchline_wrapper">
+        <div>
+            <img id="logo" src="images\logo.jpg">
         </div>
+
+        <div class="inline_display">
+            <input id="searchLine" class="typeahead" name="search" type="search" placeholder="What do you want to cook today?" />
+            <input type="submit" value="Cook It" />
+        </div>
+    </div>
 </form>
 
+<div id="recipes_results_wrapper">
+    {{#each arrayDataResult}}
 
-<script>
-    var substringMatcher = function() {
-        //var strs = states;
-        var strs = $.post('/autocomplete');
+        <div class="square_recipe" >
+            <div class="recipe-title">
+                <a id="linkResult" target="_blank" href="{{this.[1]}}"> {{this.[0]}} </a>
+                <p class="title-groceries">מצרכים</p>
+                {{#each this.[3]}}
+                    <ul>
+                        <li>{{this}}</li>
+                    </ul>
+                {{/each}}
 
-
-        return function findMatches(q, cb) {
-            var matches, substringRegex;
-
-            // an array that will be populated with substring matches
-            matches = [];
-
-            // regex used to determine if a string contains the substring `q`
-            substrRegex = new RegExp(q, 'i');
-
-            // iterate through the pool of strings and for any string that
-            // contains the substring `q`, add it to the `matches` array
-            $.each(strs, function(i, str) {
-                if (substrRegex.test(str)) {
-                    matches.push(str);
-                }
-            });
-
-            cb(matches);
-        };
-    };
-
-    var states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California',
-        'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii',
-        'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana',
-        'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota',
-        'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire',
-        'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota',
-        'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island',
-        'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
-        'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
-    ];
-
-    $('.typeahead').typeahead({
-                hint: true,
-                highlight: true,
-                minLength: 1
-            },
-            {
-                name: 'states',
-                limit : 100,
-                source: function(query, process,processAsync) {
-
-                    var query = $('#searchInput')[0].value;
-
-                    return $.post('./autocomplete', {query: query}, function(data){
-                       return processAsync(data);
-                    });
-                },
-                async:true
-            });
-</script>
-
-
-<ul >
-    {{#each searchResults}}
-        <P>
-            <i class="fa fa-cutlery"></i>
-            <a id="linkResult" link href={{this}}> {{this}} </a>
-        </P>
+            </div>
+            <div class="recipe-image inline_block_display">
+                <img src={{this.[2]}}>
+            </div>
+        </div>
     {{/each}}
-</ul>
+
+</div><!--End recipes_results_wrapper-->
+
+</div> <!-- End container-->
+
+<script type="application/javascript" src="js/jquery-1.12.4.min.js"></script>
+<script type="application/javascript" src="js/typeahead.bundle.js"></script>
+
+<script src="js/autocomplete.js"></script>
+
 </body>
 </html>

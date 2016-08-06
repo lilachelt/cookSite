@@ -1,35 +1,84 @@
-body {
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+/*general*/
+body
+{
+    font-size: 0.9rem;
+    font-family: "Ktav Yad CLM", "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, sans-serif
+}
+
+#container {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#logo_searchline_wrapper {
+    border-color: #0000FF;
+    border: 8px;
+    margin-right: auto;
+    margin-left: auto;
+    text-align: center;
+}
+
+#searchLine {
+    margin: auto;
+    width: 80em;
+    height: 1.7em;
+}
+
+#recipes_results_wrapper {
+    border-color: #0000FF;
+    border: 15px;
+    text-align: center;
+}
+
+.square_recipe {
+    display: inline-block;
+    width: 30%;
+    /*min-height: 14rem;*/
+    /*max-height: 14rem;*/
+    border-radius: 25px;
+    border: 2px dotted dodgerblue;
+    /*background:#cccccc;*/
+    margin: 1%;
+    text-align: right;
+    overflow: hidden;
+}
+
+.recipe-title {
+    text-align: center;
+    border-bottom: 2px solid dodgerblue;
+    font-size: 18px;
+    font-style:Sans-serif;
+    font-weight: bold;
+}
+
+.title-groceries
+{
+    color:darkblue;
+}
+
+
+.recipe-image img {
+    width: inherit;
+    text-align: left;
+}
+
+.inline_block_display {
+    display: inline-block;
 }
 
 #logo {
-  width: 50%;
-  display: block;
-  margin-left: auto;
-  margin-right: auto
+    max-width:10%;
+    min-width:10%;
+    display: block;
+    margin: auto;
 }
 
-#search {
-  width: 50%;
-  height: 2rem;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  display:inline-block;
+ul{
+    list-style-type: none;
+    text-align:center;
+    padding-right: 0.6rem;
 }
 
-#searchLine
-{
-  position: relative;
-  left: 25%;
-  width: 45%;
-  display:inline-block;
-}
-
-#searchBottom
-{
-
-  left: 25%;
-  width:8%;
-  display:inline-block;
+li{
+    text-align: right;
 }

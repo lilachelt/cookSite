@@ -13,7 +13,6 @@ var db = require('./mongo').getDb();
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
-var search = require('./routes/search');
 var autocomplete = require('./routes/autocomplete');
 
 var app = express();
@@ -35,7 +34,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
-app.use('/search', search);
 app.use('/autocomplete',autocomplete);
 
 
@@ -101,14 +99,13 @@ app.use('/autocomplete',autocomplete);
                                 buildIngredientsDetailsArray(db, IDsIngredientsArr, 'Word',function (ingredientsNames) {
 
                                     buildIngredientsDetailsArray(db, IDsIngredientsArr, 'ImagePath',function (ingredientsImages) {
-                                        console.log(ingredientsImages);
 
                                         /**
                                          * merge all the data to one big array in order to display it to web page
                                          */
 
                                         mergeArraysToOneArray(titlesUrlsArr, linksUrlsArr, LinksImages, ingredientsNames,ingredientsImages ,function(arrayDataResult) {
-                                            res.render('search', {arrayDataResult: arrayDataResult});
+                                            res.render('index', {arrayDataResult: arrayDataResult});
 
                                         });
 
