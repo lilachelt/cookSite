@@ -73,53 +73,14 @@ app.use('/autocomplete',autocomplete);
                     var linksId = docs[doc]["Links"];
                 }
             }
-
-            /**
-             * get all the titles using links ID from collection 'Links'
-             */
-            getDataFromDbUsingLinksId(linksId, db, 'Links', 'Title', '_id', function(titlesUrlsArr) {
-                /**
-                 * get all the urls using links ID from collection 'Links'
-                 */
-
-                getDataFromDbUsingLinksId(linksId, db, 'Links', 'Link', '_id', function(linksUrlsArr) {
-                    /**
-                     * get all the Ingredients IDs using links ID from collection 'Links'
-                     */
-
-                    getDataFromDbUsingLinksId(linksId, db, 'Links', 'ImagePath', '_id', function(LinksImages) {
-                        /**
-                         * get all the Ingredients IDs of each recipe using Ingredients ID from collection 'LinksToWords'
-                         */
-
-                        getDataFromDbUsingLinksId(linksId, db, 'Links', 'Ingredients', '_id', function(IngredientsIDArr) {
-
-                            getDataFromDbUsingLinksId(IngredientsIDArr, db, 'LinksToWords', 'Words', '_id', function(IDsIngredientsArr) {
-
-                                buildIngredientsDetailsArray(db, IDsIngredientsArr, 'Word',function (ingredientsNames) {
-
-                                    buildIngredientsDetailsArray(db, IDsIngredientsArr, 'ImagePath',function (ingredientsImages) {
-
-                                        /**
-                                         * merge all the data to one big array in order to display it to web page
-                                         */
-
-                                        mergeArraysToOneArray(titlesUrlsArr, linksUrlsArr, LinksImages, ingredientsNames,ingredientsImages ,function(arrayDataResult) {
-                                            res.render('index', {arrayDataResult: arrayDataResult});
-
-                                        });
-
-                                    });
-                                });
-                            });
-                        });
-                    });
-                });
+            getAllDataFromDbBySearchString(linksId,function (arrayDataResult) {
+                res.render('index', {arrayDataResult: arrayDataResult});
             });
-
         });
-    }
-  });
+    };
+  })
+
+
    // catch 404 and forward to error handler
   app.use(function(req, res, next) {
     var err = new Error('Not Found');
@@ -184,7 +145,6 @@ function getDataFromDbUsingLinksId(linksId, db, collectionName, itemName, search
     return arrDataLinks;
 }
 
-
 function buildIngredientsDetailsArray(db, ingredientsIdArr,searchParam, callback) {
 
     ingredientsResultsArr = [];
@@ -205,7 +165,6 @@ function buildIngredientsDetailsArray(db, ingredientsIdArr,searchParam, callback
     }
 }
 
-
 function mergeArraysToOneArray(titlesUrlsArr, linksUrlsArr,LinksImages,ingredientsNamesArr,ingredientsImages, callback) {
     var arrResult = new Array(linksUrlsArr.length);
 
@@ -220,3 +179,49 @@ function mergeArraysToOneArray(titlesUrlsArr, linksUrlsArr,LinksImages,ingredien
 
     callback(arrResult);
 }
+
+function getAllDataFromDbBySearchString(linksId,callback) {
+    /**
+     * get all the titles using links ID from collection 'Links'
+     */
+    getDataFromDbUsingLinksId(linksId, db, 'Links', 'Title', '_id', function(titlesUrlsArr) {
+        /**
+         * get all the urls using links ID from collection 'Links'
+         */
+
+        getDataFromDbUsingLinksId(linksId, db, 'Links', 'Link', '_id', function(linksUrlsArr) {
+            /**
+             * get all the Ingredients IDs using links ID from collection 'Links'
+             */
+
+            getDataFromDbUsingLinksId(linksId, db, 'Links', 'ImagePath', '_id', function(LinksImages) {
+                /**
+                 * get all the Ingredients IDs of each recipe using Ingredients ID from collection 'LinksToWords'
+                 */
+
+                getDataFromDbUsingLinksId(linksId, db, 'Links', 'Ingredients', '_id', function(IngredientsIDArr) {
+
+                    getDataFromDbUsingLinksId(IngredientsIDArr, db, 'LinksToWords', 'Words', '_id', function(IDsIngredientsArr) {
+
+                        buildIngredientsDetailsArray(db, IDsIngredientsArr, 'Word',function (ingredientsNames) {
+
+                            buildIngredientsDetailsArray(db, IDsIngredientsArr, 'ImagePath',function (ingredientsImages) {
+
+                                /**
+                                 * merge all the data to one big array in order to display it to web page
+                                 */
+
+                                mergeArraysToOneArray(titlesUrlsArr, linksUrlsArr, LinksImages, ingredientsNames, ingredientsImages, function (arrayDataResult) {
+                                    callback(arrayDataResult);
+                                    return arrayDataResult;
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
+
+ }
+
