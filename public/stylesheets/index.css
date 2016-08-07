@@ -2,7 +2,7 @@
 body
 {
     font-size: 0.9rem;
-    font-family: 'Open Sans Hebrew',serif;
+
 }
 
 #container {
@@ -29,7 +29,9 @@ body
     border: 15px;
     text-align: center;
     background-color:white;
+    font-family: "Berlin Sans FB";
 }
+
 
 .square_recipe {
     display: inline-block;
