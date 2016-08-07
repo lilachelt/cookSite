@@ -88,3 +88,8 @@ ul{
 li{
     text-align: right;
 }
+
+.tt-menu {
+    background-color: white;
+    border: solid 1px black;
+}

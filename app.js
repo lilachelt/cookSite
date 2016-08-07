@@ -18,7 +18,7 @@ var autocomplete = require('./routes/autocomplete');
 var app = express();
 //var rabbitMqSend = require('../send').connect(function()
 var amqp = require('amqplib/callback_api');
-var urlRabbit = 'vmedu94.mtacloud.co.il:15672';
+var urlRabbit = 'amqp://vmedu94.mtacloud.co.il:15672';
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
