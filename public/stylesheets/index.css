@@ -2,7 +2,7 @@
 body
 {
     font-size: 0.9rem;
-    font-family: "Ktav Yad CLM", "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, sans-serif
+    font-family: 'Open Sans Hebrew',serif;
 }
 
 #container {
@@ -20,24 +20,22 @@ body
 
 #searchLine {
     margin: auto;
-    width: 80em;
-    height: 1.7em;
+    width: 75em;
+    height: 1.6em;
 }
 
-#recipes_results_wrapper {
+.result-box .item {
     border-color: #0000FF;
     border: 15px;
     text-align: center;
+    background-color:white;
 }
 
 .square_recipe {
     display: inline-block;
     width: 30%;
-    /*min-height: 14rem;*/
-    /*max-height: 14rem;*/
     border-radius: 25px;
     border: 2px dotted dodgerblue;
-    /*background:#cccccc;*/
     margin: 1%;
     text-align: right;
     overflow: hidden;
@@ -47,7 +45,6 @@ body
     text-align: center;
     border-bottom: 2px solid dodgerblue;
     font-size: 18px;
-    font-style:Sans-serif;
     font-weight: bold;
 }
 
@@ -60,6 +57,13 @@ body
 .recipe-image img {
     width: inherit;
     text-align: left;
+    height: auto;
+}
+
+img
+{
+    display: block;
+    width:30rem;
 }
 
 .inline_block_display {

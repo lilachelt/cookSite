@@ -3,12 +3,10 @@
 <head>
     <title>{{title}}</title>
     <link rel="stylesheet" href="stylesheets/index.css">
-
 </head>
-<body>
-
+<body >
+<!--background="images\backgroundSite.jpg-->
 <div id="container">
-
 <form action="" method="post">
     <div id="logo_searchline_wrapper">
         <div>
@@ -21,13 +19,13 @@
         </div>
     </div>
 </form>
-
-<div id="recipes_results_wrapper">
+<div class="result-box item">\
+    <div class="box-img">
     {{#each arrayDataResult}}
-
         <div class="square_recipe" >
             <div class="recipe-title">
-                <a id="linkResult" target="_blank" href="{{this.[1]}}"> {{this.[0]}} </a>
+                <a id="linkResult" target="_blank" href="{{this.[1]}}"> <img src={{this.[2]}}>  </a>
+                <h3> <a href="{{this.[1]}}">{{this.[0]}}</a> </h3>
                 <p class="title-groceries">מצרכים</p>
                 {{#each this.[3]}}
                     <ul>
@@ -36,13 +34,12 @@
                 {{/each}}
 
             </div>
-            <div class="recipe-image inline_block_display">
-                <img src={{this.[2]}}>
-            </div>
+            <!--<div class="recipe-image inline_block_display">-->
+            <!--</div>-->
         </div>
     {{/each}}
-
-</div><!--End recipes_results_wrapper-->
+ </div>   <!--box-img-->
+</div><!--result-box item-->
 
 </div> <!-- End container-->
 

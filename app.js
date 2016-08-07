@@ -54,11 +54,10 @@ app.use('/autocomplete',autocomplete);
       //TODO delete links after
     if (searchString != '') {
         // next(Error('Please insert search string!'));
-
         /**
          * Show the search key word in the search box after 'search' button clicked.
          */
-        req.body.search = searchString;
+         req.body.search = searchString;
 
         db.collection('SearchStrings').find({'StringSearch': searchString}).toArray(function (err, docs) {
 
