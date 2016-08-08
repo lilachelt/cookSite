@@ -2,7 +2,6 @@
 body
 {
     font-size: 0.9rem;
-
 }
 
 #container {
@@ -62,7 +61,7 @@ body
     height: auto;
 }
 
-img
+#imgRecipe img
 {
     display: block;
     width:30rem;
@@ -89,6 +88,21 @@ li{
     text-align: right;
 }
 
+.ingredientImgName-warpper
+{
+    display: inline-block;
+    /*width: 30%;*/
+    margin: 1%;
+    /*overflow: hidden;*/
+}
+
+#ingredientImg
+{
+    width: 4.5rem;
+    height: 5rem;
+    /*display: block;*/
+    /*margin: auto;*/
+}
 .tt-menu {
     background-color: white;
     border: solid 1px black;
