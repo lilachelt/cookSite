@@ -52,6 +52,7 @@ body
 .title-groceries
 {
     color:darkblue;
+    font-size: 18px;
 }
 
 
@@ -61,10 +62,11 @@ body
     height: auto;
 }
 
-#imgRecipe img
+#imgRecipe
 {
     display: block;
-    width:30rem;
+    width: 100%;
+    height: 100%;
 }
 
 .inline_block_display {
@@ -85,7 +87,7 @@ ul{
 }
 
 li{
-    text-align: right;
+    font-size: 18px;
 }
 
 .ingredientImgName-warpper
