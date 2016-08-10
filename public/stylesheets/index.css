@@ -2,11 +2,14 @@
 body
 {
     font-size: 0.9rem;
+    background-image: url("/images/backgroundSite.jpg");
 }
 
 #container {
     margin-left: auto;
     margin-right: auto;
+    width: 60%;
+    background-color: white;
 }
 
 #logo_searchline_wrapper {
@@ -32,29 +35,43 @@ body
 }
 
 
-.square_recipe {
+.square-recipe {
+    box-shadow: 0 3px rgba(0,0,0,0.07);
+    border: solid 1px;
+    border-color: #ccc;
     display: inline-block;
     width: 30%;
-    border-radius: 25px;
-    border: 2px dotted dodgerblue;
     margin: 1%;
     text-align: right;
     overflow: hidden;
+    height: 55em;
+    position: relative;
 }
 
-.recipe-title {
-    text-align: center;
-    border-bottom: 2px solid dodgerblue;
-    font-size: 18px;
-    font-weight: bold;
+.recipe-image {
+    outline: none;
+    box-shadow: none;
+    -webkit-transition: none;
+    -o-transition: none;
+    transition: none;
 }
 
-.title-groceries
-{
-    color:darkblue;
-    font-size: 18px;
+.box-entry {
+    height: 76%;
 }
 
+.rating {
+    width: 108px;
+    height: 20px;
+    margin: 0;
+    padding: 0;
+    background: url("/images/rating_small.png") no-repeat 0 bottom;
+    background-size: 108px auto;
+}
+
+.rate-4 {
+    background-position: 0 -30px;
+}
 
 .recipe-image img {
     width: inherit;
@@ -108,4 +125,14 @@ li{
 .tt-menu {
     background-color: white;
     border: solid 1px black;
+}
+
+.box-footer
+{
+    /*padding: 24px 25px 4px;*/
+    background: #f5f5f5;
+    position: absolute;
+    bottom: 0;
+    height: 3%;
+    width: 100%;
 }

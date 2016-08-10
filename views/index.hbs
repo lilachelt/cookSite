@@ -20,29 +20,29 @@
     </div>
 </form>
 <div class="result-box item">
-    <div class="box-img">
+
     {{#each arrayDataResult}}
-        <div class="square_recipe" >
-            <div class="recipe-title">
+        <div class="square-recipe" >
+            <div class="recipe-image">
                 <a id="linkResult" target="_blank" href="{{this.[1]}}"> <img id="imgRecipe"src={{this.[2]}}>  </a>
-                <h3> <a href="{{this.[1]}}">{{this.[0]}}</a> </h3>
-            </div> <!--End recipe-title-->
-                <p class="title-groceries">מצרכים</p>
-                {{#each this.[3]}}
-                    <div class="ingredientImgName-warpper">
-                    <ul>
-                             <img id="ingredientImg" src="images/{{this}}.jpg"> <li>{{this}}</li>
-                    </ul>
-                    </div><!--ingredientImgName-warpper-->
-                {{/each}}
-                <!--<a id="text-box"href="http://www.mysupermarket.co.il/%D7%A2%D7%9B%D7%A9%D7%99%D7%95_%D7%91%D7%96%D7%95%D7%9C/%D7%9E%D7%93%D7%A3">הזמנת מוצרים חסרים אונליין</a>-->
             </div>
 
+            <div class="box-entry">
+                <h2><a href="{{this.[1]}}">{{this.[0]}}</a></h2>
+                <div class="rating rate-4"> </div>
 
-    {{/each}}
- </div>   <!--box-img-->
+                <h3>מצרכים</h3>
+                {{#each this.[3]}}
+                    {{this}}<img id="ingredientImg" src="images/{{this}}.jpg">
+                {{/each}}
+            </div>
 
-</div><!--result-box item-->
+            <div class="box-footer"></div>
+        </div>
+
+        {{/each}}
+
+    </div><!--result-box item-->
 
 
 </div> <!-- End container-->
@@ -54,3 +54,4 @@
 
 </body>
 </html>
+
