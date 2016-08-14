@@ -4,26 +4,39 @@
 const express = require('express');
 var amqp = require('amqplib/callback_api');
 
+var channel = undefined;
+var q = 'stringToSearch';
 
-function connect(callback){
-    amqp.connect('http://vmedu94.mtacloud.co.il:15672', function(err, conn) {
-        console.log('successfully connected TO RabbitMQ');
-        conn.createChannel(function(err, ch) {
-            var q = 'hello';
+function connect(urlRabbit, callback){
+    amqp.connect(urlRabbit,function(err, conn) {
 
-            ch.assertQueue(q, {durable: false});
-            ch.sendToQueue(q, Buffer.from('Hello World!'));
-            console.log(" [x] Sent 'Hello World!'");
-        });
+        if (err){
+            callback(err,conn);
+        } else {
+            console.log('successfully connected to RabbitMQ');
+            conn.createConfirmChannel(function(err, ch) {
+                channel = ch;
+                channel.assertQueue(q, {durable: false});
+
+                callback(err,channel);
+            });
+        }
     });
 }
 
+function send(str,callback){
+    //var q = 'hello';
+    channel.sendToQueue(q, new Buffer(str), {}, function(err,ok){
+        if(err){
+            throw err;
+            console.log('Error send to Queue');
+        }
+        console.log('send callback', arguments);
+    });
+
+}
 
 module.exports = {
-    getMQ : function(){
-        return db;
-    },
-    connect : connect
+    connect : connect,
+    send : send
 };
-
-module.exports

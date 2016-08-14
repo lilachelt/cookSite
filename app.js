@@ -13,13 +13,13 @@ var db = require('./mongo').getDb();
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var noResult = require('./routes/noResult');
 var autocomplete = require('./routes/autocomplete');
 
 var app = express();
-//var rabbitMqSend = require('../send').connect(function()
-var amqp = require('amqplib/callback_api');
-var urlRabbit = 'amqp://vmedu94.mtacloud.co.il:15672';
-
+var rabbitMqSend = require('./send').send;
+//var amqp = require('amqplib/callback_api');
+//var urlRabbit = 'amqp://guest:guest@vmedu94.mtacloud.co.il:5672';
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
@@ -34,18 +34,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
+app.use('/noResult', noResult);
 app.use('/autocomplete',autocomplete);
 
-
-  //amqp.connect(urlRabbit,function(err, conn) {
-  //     conn.createChannel(function(err, ch) {
-  //          var q = 'hello';
-  //
-  //          ch.assertQueue(q, {durable: false});
-  //          ch.sendToQueue(q, Buffer.from('Hello World!'));
-  //          console.log(" [x] Sent 'Hello World!'");
-  //      });
-  //  });
 
 
   app.post('/', function(req, res, next) {
@@ -65,29 +56,25 @@ app.use('/autocomplete',autocomplete);
 
             if (docs.length < 1) {
                 console.dir("No documents found.");
+                //send to RabbitMQ the string that was not found in DB
+                rabbitMqSend(searchString);
+                res.render('noResult');
+         // search the data and introduce the result
             } else {
                 console.dir("Documents found!");
                 for (var doc in docs) {
                     var linksId = docs[doc]["Links"];
                 }
-            if (linksId.length != 0)
-            {
-                getAllDataFromDbBySearchString(linksId,function (arrayDataResult) {
-                    res.render('index', {arrayDataResult: arrayDataResult});
-                });
-            }
-            else
-             {
-                var noResultString = "There are No results";
-                res.render('index', {noResultString: noResultString});
-             }
+                 getAllDataFromDbBySearchString(linksId,function (arrayDataResult) {
+                  res.render('index', {arrayDataResult: arrayDataResult});
+                      });
             }
 
         });
     };
   })
 
-
+//////////////////////////
    // catch 404 and forward to error handler
   app.use(function(req, res, next) {
     var err = new Error('Not Found');
