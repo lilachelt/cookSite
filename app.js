@@ -65,16 +65,24 @@ app.use('/autocomplete',autocomplete);
 
             if (docs.length < 1) {
                 console.dir("No documents found.");
-                //goto robot
             } else {
                 console.dir("Documents found!");
                 for (var doc in docs) {
                     var linksId = docs[doc]["Links"];
                 }
+            if (linksId.length != 0)
+            {
+                getAllDataFromDbBySearchString(linksId,function (arrayDataResult) {
+                    res.render('index', {arrayDataResult: arrayDataResult});
+                });
             }
-            getAllDataFromDbBySearchString(linksId,function (arrayDataResult) {
-                res.render('index', {arrayDataResult: arrayDataResult});
-            });
+            else
+             {
+                var noResultString = "There are No results";
+                res.render('index', {noResultString: noResultString});
+             }
+            }
+
         });
     };
   })
