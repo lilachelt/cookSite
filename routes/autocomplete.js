@@ -17,7 +17,6 @@ router.post('/', function(req, res, next) {
                 result.push(docs[doc]["StringSearch"]);
             }
         }
-
         res.send(result);
     });
 });

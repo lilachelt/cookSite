@@ -2,7 +2,7 @@
 body
 {
     font-size: 0.9rem;
-    background-image: url("/images/backgroundSite.jpg");
+   /*background-image: url("/images/backgroundSite.jpg");*/
 }
 
 #container {
@@ -40,7 +40,7 @@ a
     direction:rtl;
     text-decoration:none;
     font-family:"tahoma";
-    font-size:17px;
+    font-size:16px;
     color: #000;;
 }
 
@@ -72,7 +72,7 @@ a:hover {
     display: inline-block;
     width: 30%;
     margin: 1%;
-    text-align: right;
+    text-align: center;
     overflow: hidden;
     height: 55em;
     position: relative;
@@ -88,6 +88,9 @@ a:hover {
 
 .box-entry {
     height: 76%;
+    /*border-color: darkorange;*/
+    /*border: solid 1px;*/
+
 }
 
 .rating {
@@ -124,8 +127,8 @@ a:hover {
 }
 
 #logo {
-    max-width:10%;
-    min-width:10%;
+    max-width:30%;
+    min-width:30%;
     display: block;
     margin: auto;
 }
