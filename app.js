@@ -65,6 +65,7 @@ app.use('/autocomplete',autocomplete);
                 for (var doc in docs) {
                     var linksId = docs[doc]["Links"];
                 }
+
                  getAllDataFromDbBySearchString(linksId,function (arrayDataResult) {
                   res.render('index', {arrayDataResult: arrayDataResult});
                       });
