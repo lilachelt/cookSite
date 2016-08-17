@@ -23,7 +23,7 @@ body
 
 #searchLine {
     margin: auto;
-    width: 47em;
+    width: 61em;
     height: 1.6em;
 }
 
@@ -35,7 +35,6 @@ body
     font-family: "Berlin Sans FB";
 }
 a
-
 {
     direction:rtl;
     text-decoration:none;
@@ -44,17 +43,12 @@ a
     color: #000;;
 }
 
-h3
+.tahomaFont_center
 {
     font-family:"tahoma";
     text-align: center;
 }
 
-h4
-{
-    font-family:"tahoma";
-    text-align: center;
-}
 
 /* visited link */
 a:active {
@@ -89,8 +83,6 @@ a:hover {
 
 .box-entry {
     height: 76%;
-    /*border-color: darkorange;*/
-    /*border: solid 1px;*/
 
 }
 
@@ -117,7 +109,7 @@ a:hover {
 
 #imgRecipe
 {
-    display: block;
+    /*display: block;*/
     width: 100%;
     height: 100%;
 }
@@ -134,17 +126,6 @@ a:hover {
     margin: auto;
 }
 
-ul{
-    list-style-type: none;
-    text-align:center;
-    padding-right: 0.6rem;
-}
-
-li{
-    font-size: 18px;
-    font-family:"tahoma";
-    text-align: center;
-}
 
 .ingredientImgName-warpper
 {
@@ -154,10 +135,12 @@ li{
 
 #ingredientImg
 {
-    width: 4.5rem;
-    height: 5rem;
-    display: block;
+    display: inline-block;
+    width: 3.5rem;
+    height: 4rem;
+    /*display: block;*/
     margin: auto;
+    clear:both
 }
 .tt-menu {
     background-color: white;
@@ -170,6 +153,10 @@ li{
     bottom: 0;
     height: 5%;
     width: 100%;
-    background: #ffad36;
+    background: #e4e4e4;
+}
+
+#ingredientName
+{
 
 }
