@@ -5,7 +5,7 @@ const express = require('express');
 var amqp = require('amqplib/callback_api');
 
 var channel = undefined;
-var q = 'stringToSearch';
+var q = 'Robot';
 
 function connect(urlRabbit, callback){
     amqp.connect(urlRabbit,function(err, conn) {
