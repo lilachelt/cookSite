@@ -4,8 +4,8 @@
     <title>{{title}}</title>
     <link rel="stylesheet" href="stylesheets/index.css">
 </head>
-<body >
-<!--background="images\backgroundSite.jpg-->
+<body  >
+<!--background="images\backgroundSite.jpg"-->
 <div id="container">
 <form action="" method="post">
     <div id="logo_searchline_wrapper">
@@ -30,10 +30,10 @@
             <div class="box-entry">
                 <h2><a href="{{this.[1]}}">{{this.[0]}}</a></h2>
                 <div class="rating rate-4"> </div>
-                <h3>מצרכים</h3>
+
+                <h3 class="tahomaFont_center inline_block_display">מצרכים</h3>
                 {{#each this.[3]}}
-                    <img id="ingredientImg" src="images/{{this}}.jpg">
-                    <h4>{{this}}</h4>
+                    <p class="tahomaFont_center">{{this}}</p><img id="ingredientImg" src="images/{{this}}.jpg">
                 {{/each}}
             </div>
 
