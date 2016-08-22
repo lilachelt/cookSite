@@ -113,54 +113,82 @@ module.exports = app;
 
 function getDataFromDbUsingLinksId(linksId, db, collectionName, itemName, searchParam, onResults) {
 
-    var arrDataLinks = new Array(linksId.length);
-    var mongoIds = [];
-    var query = {};
+    if (linksId != null) {
 
-    if (searchParam == '_id') {
-        linksId.forEach(function (id) {
-            mongoIds.push(new ObjectID(id));
+        var arrDataLinks = new Array(linksId.length);
+        var mongoIds = [];
+        var query = {};
+
+        if (searchParam == '_id') {
+            linksId.forEach(function (id) {
+                mongoIds.push(new ObjectID(id));
+            });
+        } else {
+            mongoIds = linksId;
+        }
+
+        query[searchParam] = {$in: mongoIds};
+
+        db.collection(collectionName).find(query).toArray(function (err, doc) {
+            if (err) throw err;
+
+            arrDataLinks = _.map(doc, function (item) {
+                return item[itemName]
+            });
+
+            onResults(arrDataLinks);
         });
-    } else {
-        mongoIds = linksId;
+    }
+    else
+    {
+        var arrDataLinks = '';
     }
 
-    query[searchParam] = {$in: mongoIds};
-
-    db.collection(collectionName).find(query).toArray(function (err, doc) {
-        if (err) throw err;
-
-        arrDataLinks = _.map(doc, function (item) {
-            return item[itemName]
-        });
-
-        onResults(arrDataLinks);
-    });
-
-    return arrDataLinks;
+        return arrDataLinks;
 }
 
-function buildIngredientsDetailsArray(db, ingredientsIdArr,searchParam, callback) {
+// function buildIngredientsDetailsArray(db, ingredientsIdArr,searchParam, callback) {
+//
+//     ingredientsResultsArr = [];
+//     counter = 0;
+//     ingredientsIdArrLength = ingredientsIdArr.length;
+//
+//     for (var i = 0; i < ingredientsIdArrLength; i++) {
+//
+//         getDataFromDbUsingLinksId(ingredientsIdArr[i], db, 'Ingredients', searchParam, '_id', function (ingredientsNames) {
+//             counter++;
+//
+//             ingredientsResultsArr.push(ingredientsNames);
+//
+//             if (counter === ingredientsIdArrLength) {
+//                 callback(ingredientsResultsArr);
+//             }
+//         });
+//     }
+// }
 
-    ingredientsResultsArr = [];
+function buildItemsDetailsArray(db, itemsIdsArr,collectionName,searchParam, callback) {
+
+    itemsResultsArr = [];
     counter = 0;
-    ingredientsIdArrLength = ingredientsIdArr.length;
+    IdsArrLength = itemsIdsArr.length;
 
-    for (var i = 0; i < ingredientsIdArrLength; i++) {
+    for (var i = 0; i < IdsArrLength; i++) {
 
-        getDataFromDbUsingLinksId(ingredientsIdArr[i], db, 'Ingredients', searchParam, '_id', function (ingredientsNames) {
+        getDataFromDbUsingLinksId(itemsIdsArr[i], db, collectionName, searchParam, '_id', function (itemNames) {
             counter++;
 
-            ingredientsResultsArr.push(ingredientsNames);
+            itemsResultsArr.push(itemNames);
 
-            if (counter === ingredientsIdArrLength) {
-                callback(ingredientsResultsArr);
+            if (counter === IdsArrLength) {
+                callback(itemsResultsArr);
             }
         });
     }
 }
 
-function mergeArraysToOneArray(titlesUrlsArr, linksUrlsArr,LinksImages,ingredientsNamesArr,ingredientsImages, callback) {
+function mergeArraysToOneArray(titlesUrlsArr, linksUrlsArr,LinksImages,ingredientsNamesArr/* ,TagsNamesArr*/,callback) {
+
     var arrResult = new Array(linksUrlsArr.length);
 
     for (var i = 0; i < arrResult.length; i++) {
@@ -169,7 +197,7 @@ function mergeArraysToOneArray(titlesUrlsArr, linksUrlsArr,LinksImages,ingredien
         arrResult[i][1] = linksUrlsArr[i];
         arrResult[i][2] = LinksImages[i];
         arrResult[i][3] = ingredientsNamesArr[i];
-        arrResult[i][4] = ingredientsImages[i];
+        //arrResult[i][4] = TagsNamesArr[i];
     }
 
     callback(arrResult);
@@ -193,23 +221,35 @@ function getAllDataFromDbBySearchString(linksId,callback) {
                 /**
                  * get all the Ingredients IDs of each recipe using Ingredients ID from collection 'LinksToWords'
                  */
-
                 getDataFromDbUsingLinksId(linksId, db, 'Links', 'Ingredients', '_id', function(IngredientsIDArr) {
 
                     getDataFromDbUsingLinksId(IngredientsIDArr, db, 'LinksToWords', 'Words', '_id', function(IDsIngredientsArr) {
 
-                        buildIngredientsDetailsArray(db, IDsIngredientsArr, 'Word',function (ingredientsNames) {
+                      //  buildIngredientsDetailsArray(db, IDsIngredientsArr, 'Word',function (ingredientsNames) {
 
-                            buildIngredientsDetailsArray(db, IDsIngredientsArr, 'ImagePath',function (ingredientsImages) {
+                        buildItemsDetailsArray(db, IDsIngredientsArr,'Ingredients' ,'Word',function (ingredientsNames) {
+
+                            getDataFromDbUsingLinksId(linksId, db, 'Links', 'Tags', '_id', function(TagsIDArr) {
+
+                                console.log(TagsIDArr);
+
+                                buildItemsDetailsArray(db, TagsIDArr,'Tags' ,'Word',function (TagsNamesArr){
+
+                                  console.log(TagsNamesArr);
+
+                               //getDataFromDbUsingLinksId(TagsIDArr, db,'Tags', 'Word', '_id', function(TagsNamesArr){
+
 
                                 /**
                                  * merge all the data to one big array in order to display it to web page
                                  */
-
-                                mergeArraysToOneArray(titlesUrlsArr, linksUrlsArr, LinksImages, ingredientsNames, ingredientsImages, function (arrayDataResult) {
+                                mergeArraysToOneArray(titlesUrlsArr, linksUrlsArr, LinksImages, ingredientsNames /*TagsNamesArr*/ ,function (arrayDataResult) {
                                     callback(arrayDataResult);
                                     return arrayDataResult;
+
+                                  });
                                 });
+
                             });
                         });
                     });
