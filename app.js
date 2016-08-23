@@ -38,7 +38,6 @@ app.use('/noResult', noResult);
 app.use('/autocomplete',autocomplete);
 
 
-
   app.post('/', function(req, res, next) {
     var searchString = req.body.search;
 

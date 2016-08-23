@@ -23,7 +23,7 @@ body
 #searchLine {
     margin: auto;
     width: 61em;
-    height: 1.6em;
+    height: 1.9em;
 }
 
 .result-box .item {
@@ -83,6 +83,27 @@ a:hover {
 
 .box-entry {
     height: 76%;
+    padding: 5px;
+    overflow: scroll;
+}
+
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+::-webkit-scrollbar-track {
+    border: 1px solid gainsboro;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: gainsboro;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: gold;
 }
 
 .rating {
