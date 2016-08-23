@@ -42,7 +42,7 @@ app.use('/autocomplete',autocomplete);
   app.post('/', function(req, res, next) {
     var searchString = req.body.search;
 
-      //TODO delete links after??
+      //TODO delete links after
     if (searchString != '') {
         // next(Error('Please insert search string!'));
         /**
@@ -50,7 +50,7 @@ app.use('/autocomplete',autocomplete);
          */
          req.body.search = searchString;
 
-        db.collection('SearchStrings').find({'StringSearch': searchString}).toArray(function (err, docs){
+        db.collection('SearchStrings').find({'StringSearch': new RegExp(searchString, 'i')}).toArray(function (err, docs) {
 
             if (err) throw err;
 
@@ -61,15 +61,27 @@ app.use('/autocomplete',autocomplete);
                 res.render('noResult');
          // search the data and introduce the result
             } else {
+                var linksId = [[]];
+                var i = 0; //LinksId iterator
                 console.dir("Documents found!");
 
                 for (var doc in docs) {
-                    var linksId = docs[doc]["Links"];
-                }
+                    if (docs[doc]["Links"] != null && docs[doc]["Links"].length > 0) {
+                        linksId[i++] = docs[doc]["Links"];
 
-                 getAllDataFromDbBySearchString(linksId,function (arrayDataResult) {
-                  res.render('index', {arrayDataResult: arrayDataResult});
-                      });
+                    }
+                }
+                //check if links list is Empty --> send string to robot
+                if (i == 0) {
+                    rabbitMqSend(searchString);
+                    res.render('noResult');
+                }
+                else {
+
+                    getAllDataFromDbBySearchString(linksId, function (arrayDataResult) {
+                        res.render('index', {arrayDataResult: arrayDataResult});
+                    });
+                }
             }
 
         });
@@ -114,66 +126,56 @@ module.exports = app;
 
 function getDataFromDbUsingLinksId(linksId, db, collectionName, itemName, searchParam, onResults) {
 
-    var arrDataLinks = new Array;
+    var arrDataLinks = new Array(linksId.length);
+    var mongoIds = [];
+    var query = {};
 
-    if (linksId != null) {
+    if (searchParam == '_id') {
+        ///lilach
 
-        arrDataLinks = Array(linksId.length);
-        var mongoIds = [];
-        var query = {};
-
-        if (searchParam == '_id') {
-            linksId.forEach(function (id) {
-                mongoIds.push(new ObjectID(id));
-            });
-        } else {
-            mongoIds = linksId;
-        }
-
-        query[searchParam] = {$in: mongoIds};
-
-        db.collection(collectionName).find(query).toArray(function (err, doc) {
-            if (err) throw err;
-
-            arrDataLinks = _.map(doc, function (item) {
-                return item[itemName]
-            });
-
-            onResults(arrDataLinks);
+        linksId.forEach(function (id) {
+            mongoIds.push(new ObjectID(id));
         });
-    }
-    else
-    {
-         arrDataLinks.push('');
-         onResults(arrDataLinks);
+    } else {
+        mongoIds = linksId;
     }
 
-        return arrDataLinks;
+    query[searchParam] = {$in: mongoIds};
+
+    db.collection(collectionName).find(query).toArray(function (err, doc) {
+        if (err) throw err;
+
+        arrDataLinks = _.map(doc, function (item) {
+            return item[itemName]
+        });
+
+        onResults(arrDataLinks);
+    });
+
+    return arrDataLinks;
 }
 
-function buildItemsDetailsArray(db, itemsIdsArr,collectionName,searchParam, callback) {
+function buildIngredientsDetailsArray(db, ingredientsIdArr,searchParam, callback) {
 
-    itemsResultsArr = [];
+    ingredientsResultsArr = [];
     counter = 0;
-    IdsArrLength = itemsIdsArr.length;
+    ingredientsIdArrLength = ingredientsIdArr.length;
 
-    for (var i = 0; i < IdsArrLength; i++) {
+    for (var i = 0; i < ingredientsIdArrLength; i++) {
 
-        getDataFromDbUsingLinksId(itemsIdsArr[i], db, collectionName, searchParam, '_id', function (itemNames) {
+        getDataFromDbUsingLinksId(ingredientsIdArr[i], db, 'Ingredients', searchParam, '_id', function (ingredientsNames) {
             counter++;
 
-            itemsResultsArr.push(itemNames);
+            ingredientsResultsArr.push(ingredientsNames);
 
-            if (counter === IdsArrLength) {
-
-                callback(itemsResultsArr);
+            if (counter === ingredientsIdArrLength) {
+                callback(ingredientsResultsArr);
             }
         });
     }
 }
 
-function mergeArraysToOneArray(titlesUrlsArr, linksUrlsArr,LinksImages,ingredientsNamesArr ,TagsNamesArr,callback) {
-
+function mergeArraysToOneArray(titlesUrlsArr, linksUrlsArr,LinksImages,ingredientsNamesArr,ingredientsImages, callback) {
     var arrResult = new Array(linksUrlsArr.length);
 
     for (var i = 0; i < arrResult.length; i++) {
@@ -182,7 +184,7 @@ function mergeArraysToOneArray(titlesUrlsArr, linksUrlsArr,LinksImages,ingredien
         arrResult[i][1] = linksUrlsArr[i];
         arrResult[i][2] = LinksImages[i];
         arrResult[i][3] = ingredientsNamesArr[i];
-        arrResult[i][4] = TagsNamesArr[i];
+        arrResult[i][4] = ingredientsImages[i];
     }
 
     callback(arrResult);
@@ -196,7 +198,6 @@ function getAllDataFromDbBySearchString(linksId,callback) {
         /**
          * get all the urls using links ID from collection 'Links'
          */
-
         getDataFromDbUsingLinksId(linksId, db, 'Links', 'Link', '_id', function(linksUrlsArr) {
             /**
              * get all the Ingredients IDs using links ID from collection 'Links'
@@ -206,26 +207,23 @@ function getAllDataFromDbBySearchString(linksId,callback) {
                 /**
                  * get all the Ingredients IDs of each recipe using Ingredients ID from collection 'LinksToWords'
                  */
+
                 getDataFromDbUsingLinksId(linksId, db, 'Links', 'Ingredients', '_id', function(IngredientsIDArr) {
 
-                    getDataFromDbUsingLinksId(IngredientsIDArr,db,'LinksToWords','Words','_id',function(IDsIngredientsArr) {
+                    getDataFromDbUsingLinksId(IngredientsIDArr, db, 'LinksToWords', 'Words', '_id', function(IDsIngredientsArr) {
 
-                        buildItemsDetailsArray(db,IDsIngredientsArr,'Ingredients','Word',function(ingredientsNames) {
+                        buildIngredientsDetailsArray(db, IDsIngredientsArr, 'Word',function (ingredientsNames) {
 
-                            getDataFromDbUsingLinksId(linksId,db,'Links','Tags','_id',function(TagsIDArr) {
-
-                                buildItemsDetailsArray(db,TagsIDArr,'Tags','Word',function(tagsNamesArr){
+                            buildIngredientsDetailsArray(db, IDsIngredientsArr, 'ImagePath',function (ingredientsImages) {
 
                                 /**
                                  * merge all the data to one big array in order to display it to web page
                                  */
-                                mergeArraysToOneArray(titlesUrlsArr, linksUrlsArr, LinksImages, ingredientsNames ,tagsNamesArr ,function (arrayDataResult) {
+
+                                mergeArraysToOneArray(titlesUrlsArr, linksUrlsArr, LinksImages, ingredientsNames, ingredientsImages, function (arrayDataResult) {
                                     callback(arrayDataResult);
                                     return arrayDataResult;
-
-                                  });
                                 });
-
                             });
                         });
                     });
@@ -235,5 +233,4 @@ function getAllDataFromDbBySearchString(linksId,callback) {
     });
 
  }
-
 
