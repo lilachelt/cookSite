@@ -38,8 +38,10 @@ app.use('/noResult', noResult);
 app.use('/autocomplete',autocomplete);
 
 
+
   app.post('/', function(req, res, next) {
     var searchString = req.body.search;
+    //runOperationSearch(searchString);
 
       //TODO delete links after??
     if (searchString != '') {
@@ -235,4 +237,38 @@ function getAllDataFromDbBySearchString(linksId,callback) {
 
  }
 
+
+// function runOperationSearch(searchString) {
+//
+//     if (searchString != '') {
+//         /**
+//          * Show the search key word in the search box after 'search' button clicked.
+//          */
+//          req.body.search = searchString;
+//
+//         db.collection('SearchStrings').find({'StringSearch': searchString}).toArray(function (err, docs){
+//
+//             if (err) throw err;
+//
+//             if (docs.length < 1) {
+//                 console.dir("No documents found.");
+//                 //send to RabbitMQ the string that was not found in DB
+//                 rabbitMqSend(searchString);
+//                 res.render('noResult');
+//          // search the data and introduce the result
+//             } else {
+//                 console.dir("Documents found!");
+//
+//                 for (var doc in docs) {
+//                     var linksId = docs[doc]["Links"];
+//                 }
+//
+//                  getAllDataFromDbBySearchString(linksId,function (arrayDataResult) {
+//                   res.render('index', {arrayDataResult: arrayDataResult});
+//                       });
+//             }
+//
+//         });
+//     };
+// }
 
