@@ -38,44 +38,20 @@ app.use('/noResult', noResult);
 app.use('/autocomplete',autocomplete);
 
 
-
   app.post('/', function(req, res, next) {
-    var searchString = req.body.search;
-    //runOperationSearch(searchString);
-
-      //TODO delete links after??
-    if (searchString != '') {
-        // next(Error('Please insert search string!'));
-        /**
-         * Show the search key word in the search box after 'search' button clicked.
-         */
-         req.body.search = searchString;
-
-        db.collection('SearchStrings').find({'StringSearch': searchString}).toArray(function (err, docs){
-
-            if (err) throw err;
-
-            if (docs.length < 1) {
-                console.dir("No documents found.");
-                //send to RabbitMQ the string that was not found in DB
-                rabbitMqSend(searchString);
-                res.render('noResult');
-         // search the data and introduce the result
-            } else {
-                console.dir("Documents found!");
-
-                for (var doc in docs) {
-                    var linksId = docs[doc]["Links"];
-                }
-
-                 getAllDataFromDbBySearchString(linksId,function (arrayDataResult) {
+      var searchString = req.body.search;
+          //TODO delete links after??
+      if (searchString != '') {
+           /*Show the search key word in the search box after 'search' button clicked.*/
+            req.body.search = searchString;
+          runOperationSearch(searchString, res,function (linksId) {
+              getAllDataFromDbBySearchString(linksId, function (arrayDataResult) {
                   res.render('index', {arrayDataResult: arrayDataResult});
-                      });
-            }
+              });
+          });
+      }
+  });
 
-        });
-    };
-  })
 
 //////////////////////////
    // catch 404 and forward to error handler
@@ -237,38 +213,42 @@ function getAllDataFromDbBySearchString(linksId,callback) {
 
  }
 
+function runOperationSearch(searchString,res, callback) {
 
-// function runOperationSearch(searchString) {
-//
-//     if (searchString != '') {
-//         /**
-//          * Show the search key word in the search box after 'search' button clicked.
-//          */
-//          req.body.search = searchString;
-//
-//         db.collection('SearchStrings').find({'StringSearch': searchString}).toArray(function (err, docs){
-//
-//             if (err) throw err;
-//
-//             if (docs.length < 1) {
-//                 console.dir("No documents found.");
-//                 //send to RabbitMQ the string that was not found in DB
-//                 rabbitMqSend(searchString);
-//                 res.render('noResult');
-//          // search the data and introduce the result
-//             } else {
-//                 console.dir("Documents found!");
-//
-//                 for (var doc in docs) {
-//                     var linksId = docs[doc]["Links"];
-//                 }
-//
-//                  getAllDataFromDbBySearchString(linksId,function (arrayDataResult) {
-//                   res.render('index', {arrayDataResult: arrayDataResult});
-//                       });
-//             }
-//
-//         });
-//     };
-// }
+        db.collection('SearchStrings').find({'StringSearch': searchString}).toArray(function (err, docs){
+            if (err) throw err;
+
+            if (docs.length < 1) {
+                //searching the string in LikeSearchString field
+                db.collection('SearchStrings').find({'LikeSearchString': searchString}).toArray(function (err, docs)
+                {
+                    if (docs.length < 1)
+                    {
+                        //send to RabbitMQ the string that was not found in DB
+                        rabbitMqSend(searchString);
+                        res.render('noResult');
+                    }
+                    else
+                    {
+                        for (var doc in docs) {
+                            var linksId = docs[doc]["Links"];
+                        }
+                        callback(linksId);
+                    }
+                });
+                console.dir("No documents found.");
+
+                //rabbitMqSend(searchString);
+                //res.render('noResult');
+         // search the data and introduce the result
+            } else {
+                for (var doc in docs) {
+                    var linksId = docs[doc]["Links"];
+                }
+                callback(linksId);
+            }
+
+        });
+}
+
 
