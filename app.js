@@ -38,55 +38,20 @@ app.use('/noResult', noResult);
 app.use('/autocomplete',autocomplete);
 
 
-
   app.post('/', function(req, res, next) {
-    var searchString = req.body.search;
+      var searchString = req.body.search;
+          //TODO delete links after??
+      if (searchString != '') {
+           /*Show the search key word in the search box after 'search' button clicked.*/
+            req.body.search = searchString;
+          runOperationSearch(searchString, res,function (linksId) {
+              getAllDataFromDbBySearchString(linksId, function (arrayDataResult) {
+                  res.render('index', {arrayDataResult: arrayDataResult});
+              });
+          });
+      }
+  });
 
-      //TODO delete links after
-    if (searchString != '') {
-        // next(Error('Please insert search string!'));
-        /**
-         * Show the search key word in the search box after 'search' button clicked.
-         */
-         req.body.search = searchString;
-
-        db.collection('SearchStrings').find({'StringSearch': new RegExp(searchString, 'i')}).toArray(function (err, docs) {
-
-            if (err) throw err;
-
-            if (docs.length < 1) {
-                console.dir("No documents found.");
-                //send to RabbitMQ the string that was not found in DB
-                rabbitMqSend(searchString);
-                res.render('noResult');
-         // search the data and introduce the result
-            } else {
-                var linksId = [[]];
-                var i = 0; //LinksId iterator
-                console.dir("Documents found!");
-
-                for (var doc in docs) {
-                    if (docs[doc]["Links"] != null && docs[doc]["Links"].length > 0) {
-                        linksId[i++] = docs[doc]["Links"];
-
-                    }
-                }
-                //check if links list is Empty --> send string to robot
-                if (i == 0) {
-                    rabbitMqSend(searchString);
-                    res.render('noResult');
-                }
-                else {
-
-                    getAllDataFromDbBySearchString(linksId, function (arrayDataResult) {
-                        res.render('index', {arrayDataResult: arrayDataResult});
-                    });
-                }
-            }
-
-        });
-    };
-  })
 
 //////////////////////////
    // catch 404 and forward to error handler
@@ -126,56 +91,66 @@ module.exports = app;
 
 function getDataFromDbUsingLinksId(linksId, db, collectionName, itemName, searchParam, onResults) {
 
-    var arrDataLinks = new Array(linksId.length);
-    var mongoIds = [];
-    var query = {};
+    var arrDataLinks = new Array;
 
-    if (searchParam == '_id') {
-        ///lilach
+    if (linksId != null) {
 
-        linksId.forEach(function (id) {
-            mongoIds.push(new ObjectID(id));
+        arrDataLinks = Array(linksId.length);
+        var mongoIds = [];
+        var query = {};
+
+        if (searchParam == '_id') {
+            linksId.forEach(function (id) {
+                mongoIds.push(new ObjectID(id));
+            });
+        } else {
+            mongoIds = linksId;
+        }
+
+        query[searchParam] = {$in: mongoIds};
+
+        db.collection(collectionName).find(query).toArray(function (err, doc) {
+            if (err) throw err;
+
+            arrDataLinks = _.map(doc, function (item) {
+                return item[itemName]
+            });
+
+            onResults(arrDataLinks);
         });
-    } else {
-        mongoIds = linksId;
+    }
+    else
+    {
+         arrDataLinks.push('');
+         onResults(arrDataLinks);
     }
 
-    query[searchParam] = {$in: mongoIds};
-
-    db.collection(collectionName).find(query).toArray(function (err, doc) {
-        if (err) throw err;
-
-        arrDataLinks = _.map(doc, function (item) {
-            return item[itemName]
-        });
-
-        onResults(arrDataLinks);
-    });
-
-    return arrDataLinks;
+        return arrDataLinks;
 }
 
-function buildIngredientsDetailsArray(db, ingredientsIdArr,searchParam, callback) {
+function buildItemsDetailsArray(db, itemsIdsArr,collectionName,searchParam, callback) {
 
-    ingredientsResultsArr = [];
+    itemsResultsArr = [];
     counter = 0;
-    ingredientsIdArrLength = ingredientsIdArr.length;
+    IdsArrLength = itemsIdsArr.length;
 
-    for (var i = 0; i < ingredientsIdArrLength; i++) {
+    for (var i = 0; i < IdsArrLength; i++) {
 
-        getDataFromDbUsingLinksId(ingredientsIdArr[i], db, 'Ingredients', searchParam, '_id', function (ingredientsNames) {
+        getDataFromDbUsingLinksId(itemsIdsArr[i], db, collectionName, searchParam, '_id', function (itemNames) {
             counter++;
 
-            ingredientsResultsArr.push(ingredientsNames);
+            itemsResultsArr.push(itemNames);
 
-            if (counter === ingredientsIdArrLength) {
-                callback(ingredientsResultsArr);
+            if (counter === IdsArrLength) {
+
+                callback(itemsResultsArr);
             }
         });
     }
 }
 
-function mergeArraysToOneArray(titlesUrlsArr, linksUrlsArr,LinksImages,ingredientsNamesArr,ingredientsImages, callback) {
+function mergeArraysToOneArray(titlesUrlsArr, linksUrlsArr,LinksImages,ingredientsNamesArr ,TagsNamesArr,callback) {
+
     var arrResult = new Array(linksUrlsArr.length);
 
     for (var i = 0; i < arrResult.length; i++) {
@@ -184,7 +159,7 @@ function mergeArraysToOneArray(titlesUrlsArr, linksUrlsArr,LinksImages,ingredien
         arrResult[i][1] = linksUrlsArr[i];
         arrResult[i][2] = LinksImages[i];
         arrResult[i][3] = ingredientsNamesArr[i];
-        arrResult[i][4] = ingredientsImages[i];
+        arrResult[i][4] = TagsNamesArr[i];
     }
 
     callback(arrResult);
@@ -198,6 +173,7 @@ function getAllDataFromDbBySearchString(linksId,callback) {
         /**
          * get all the urls using links ID from collection 'Links'
          */
+
         getDataFromDbUsingLinksId(linksId, db, 'Links', 'Link', '_id', function(linksUrlsArr) {
             /**
              * get all the Ingredients IDs using links ID from collection 'Links'
@@ -207,23 +183,26 @@ function getAllDataFromDbBySearchString(linksId,callback) {
                 /**
                  * get all the Ingredients IDs of each recipe using Ingredients ID from collection 'LinksToWords'
                  */
-
                 getDataFromDbUsingLinksId(linksId, db, 'Links', 'Ingredients', '_id', function(IngredientsIDArr) {
 
-                    getDataFromDbUsingLinksId(IngredientsIDArr, db, 'LinksToWords', 'Words', '_id', function(IDsIngredientsArr) {
+                    getDataFromDbUsingLinksId(IngredientsIDArr,db,'LinksToWords','Words','_id',function(IDsIngredientsArr) {
 
-                        buildIngredientsDetailsArray(db, IDsIngredientsArr, 'Word',function (ingredientsNames) {
+                        buildItemsDetailsArray(db,IDsIngredientsArr,'Ingredients','Word',function(ingredientsNames) {
 
-                            buildIngredientsDetailsArray(db, IDsIngredientsArr, 'ImagePath',function (ingredientsImages) {
+                            getDataFromDbUsingLinksId(linksId,db,'Links','Tags','_id',function(TagsIDArr) {
+
+                                buildItemsDetailsArray(db,TagsIDArr,'Tags','Word',function(tagsNamesArr){
 
                                 /**
                                  * merge all the data to one big array in order to display it to web page
                                  */
-
-                                mergeArraysToOneArray(titlesUrlsArr, linksUrlsArr, LinksImages, ingredientsNames, ingredientsImages, function (arrayDataResult) {
+                                mergeArraysToOneArray(titlesUrlsArr, linksUrlsArr, LinksImages, ingredientsNames ,tagsNamesArr ,function (arrayDataResult) {
                                     callback(arrayDataResult);
                                     return arrayDataResult;
+
+                                  });
                                 });
+
                             });
                         });
                     });
@@ -233,4 +212,43 @@ function getAllDataFromDbBySearchString(linksId,callback) {
     });
 
  }
+
+function runOperationSearch(searchString,res, callback) {
+
+        db.collection('SearchStrings').find({'StringSearch': searchString}).toArray(function (err, docs){
+            if (err) throw err;
+
+            if (docs.length < 1) {
+                //searching the string in LikeSearchString field
+                db.collection('SearchStrings').find({'LikeSearchString': searchString}).toArray(function (err, docs)
+                {
+                    if (docs.length < 1)
+                    {
+                        //send to RabbitMQ the string that was not found in DB
+                        rabbitMqSend(searchString);
+                        res.render('noResult');
+                    }
+                    else
+                    {
+                        for (var doc in docs) {
+                            var linksId = docs[doc]["Links"];
+                        }
+                        callback(linksId);
+                    }
+                });
+                console.dir("No documents found.");
+
+                //rabbitMqSend(searchString);
+                //res.render('noResult');
+         // search the data and introduce the result
+            } else {
+                for (var doc in docs) {
+                    var linksId = docs[doc]["Links"];
+                }
+                callback(linksId);
+            }
+
+        });
+}
+
 
