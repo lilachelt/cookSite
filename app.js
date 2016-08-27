@@ -18,8 +18,7 @@ var autocomplete = require('./routes/autocomplete');
 
 var app = express();
 var rabbitMqSend = require('./send').send;
-//var amqp = require('amqplib/callback_api');
-//var urlRabbit = 'amqp://guest:guest@vmedu94.mtacloud.co.il:5672';
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
@@ -244,6 +243,11 @@ function runOperationSearch(searchString,res, callback) {
             } else {
                 for (var doc in docs) {
                     var linksId = docs[doc]["Links"];
+                }
+                // Check if links list is Empty --> send to Queue
+                if(!(linksId[0])){
+                    rabbitMqSend(searchString);
+                    res.render('noResult');
                 }
                 callback(linksId);
             }
