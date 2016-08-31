@@ -3,19 +3,21 @@
 <head>
     <title>{{title}}</title>
     <link rel="stylesheet" href="stylesheets/index.css">
+    <script src="jquery-1.12.4.min.js"></script>
 </head>
 <body  >
 <!--background="images\backgroundSite.jpg"-->
 <div id="container">
-<form action="" method="post">
+<form action="" id="theForm" method="post">
     <div id="logo_searchline_wrapper">
         <div>
       <a href ="http://localhost:3000/" > <img id="logo" src="images\logo.jpg"> </a>
         </div>
 
         <div class="inline_display">
-            <input id="searchLine" class="typeahead" type="search" autofocus="autofocus" action="createString.js" dir="rtl"  name="search"  placeholder="What do you want to cook today?" />
-            <input type="submit" value="Cook It" />
+            <input id="searchLine" class="typeahead" type="search" autofocus="autofocus"  dir="rtl"  name="search"  placeholder="מה נרצה להכין היום?" />
+            <input type="submit" name="theForm" id="cookItButton" onClick="doSearch()" value="Cook It" />
+
         </div>
     </div>
 </form>
@@ -52,10 +54,41 @@
 
 </div> <!-- End container-->
 
+<script>
+    function doSearch() {
+      //  $.ajax(b,cb);
+        document.getElementById("cookItButton").innerHTML="It worked";
+        console.log('script');
+       // return false;
+       // document.getElementById("demo").style.color = "red";
+    }
+</script>
+
+
+
 <script type="application/javascript" src="js/jquery-1.12.4.min.js"></script>
 <script type="application/javascript" src="js/typeahead.bundle.js"></script>
 
 <script src="js/autocomplete.js"></script>
+
+<script>
+    $('#searchLine').keypress(function(event){
+
+//        var reg = new RegExp("[\u0590-\u05fe]");
+//        var str = $('#searchLine').val();
+//        if ((str.charCodeAt(0) > 0x590) && (str.charCodeAt(0) < 0x5FF))
+//        {
+//
+//        }
+        var code = event.keyCode || event.which;
+        console.log('key up',code);
+        // block from number(49-57) & english letters & signs
+        if (code >= 44 && code <= 122){
+            alert("only hebrew");
+            event.preventDefault();
+        }
+    });
+</script>
 
 </body>
 </html>

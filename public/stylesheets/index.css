@@ -22,8 +22,29 @@ body
 
 #searchLine {
     margin: auto;
-    width: 61em;
+  /*  width: 61em;*/
     height: 1.9em;
+}
+
+.typeahead {
+    width: 61em;
+}
+
+.tt-menu {
+    background-color: white;
+    border: solid 1px black;
+    width: 56em;
+    text-align: right;
+    minLength: 0
+}
+
+/*.tt-dropdown-menu {*/
+    /*max-height: 150px;*/
+    /*overflow-y: auto;*/
+/*}*/
+
+.tt-suggestion:hover{
+    background-color: #666666;
 }
 
 .result-box .item {
@@ -157,10 +178,7 @@ a:hover {
     margin: auto;
     clear:both
 }
-.tt-menu {
-    background-color: white;
-    border: solid 1px black;
-}
+
 .box-footer
 {
     position: absolute;
