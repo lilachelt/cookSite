@@ -225,7 +225,10 @@ function runOperationSearch(searchString,res, callback) {
                     {
                         //send to RabbitMQ the string that was not found in DB
                         rabbitMqSend(searchString);
+                        //setTimeout(runOperationSearch(searchString,res),30000);
+                        //runOperationSearch(searchString,res);
                         res.render('noResult');
+
                     }
                     else
                     {
