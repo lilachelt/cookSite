@@ -3,24 +3,28 @@
 <head>
     <title>{{title}}</title>
     <link rel="stylesheet" href="stylesheets/index.css">
-    <script src="jquery-1.12.4.min.js"></script>
 </head>
-<body  >
+
+<body >
 <!--background="images\backgroundSite.jpg"-->
 <div id="container">
 <form action="" id="theForm" method="post">
     <div id="logo_searchline_wrapper">
         <div>
-      <a href ="http://www.cookit.co.il/" > <img id="logo" src="images\logo.jpg"> </a>
+      <a  > <img id="logo" src="images\logo.jpg"> </a>
         </div>
 
         <div class="inline_display">
             <input id="searchLine" class="typeahead" type="search" autofocus="autofocus"  dir="rtl"  name="search"  placeholder="מה נרצה להכין היום?" />
-            <input type="submit" name="theForm" id="cookItButton" onClick="doSearch()" value="Cook It" />
+            <input type="submit" name="theForm" id="cookItButton" value="Cook It" />
 
         </div>
     </div>
 </form>
+
+    <!--<div id="loading">-->
+        <!--<img id="loading-image" src="https://cdn1.freshdesignweb.com/wp-content/uploads/2014/05/Circular-Progress-Bar.jpg" alt="Loading..." />-->
+    <!--</div>-->
 <div class="result-box item">
 
     {{#each arrayDataResult}}
@@ -54,21 +58,9 @@
 
 </div> <!-- End container-->
 
-<script>
-    function doSearch() {
-      //  $.ajax(b,cb);
-        document.getElementById("cookItButton").innerHTML="It worked";
-        console.log('script');
-       // return false;
-       // document.getElementById("demo").style.color = "red";
-    }
-</script>
-
-
 
 <script type="application/javascript" src="js/jquery-1.12.4.min.js"></script>
 <script type="application/javascript" src="js/typeahead.bundle.js"></script>
-
 <script src="js/autocomplete.js"></script>
 
 <script>
@@ -84,11 +76,14 @@
         console.log('key up',code);
         // block from number(49-57) & english letters & signs
         if (code >= 44 && code <= 122){
-            alert("only hebrew");
+            alert(document.getElementById("searchLine"));
+//            alert("only hebrew");
             event.preventDefault();
         }
     });
 </script>
+
+
 
 </body>
 </html>

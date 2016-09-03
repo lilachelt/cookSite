@@ -1,18 +1,97 @@
+
 <!DOCTYPE html>
 <html>
 <head>
     <title>{{title}}</title>
     <link rel="stylesheet" href="stylesheets/noResult.css">
+    <script type="application/javascript" src="js/jquery-1.12.4.min.js"></script>
 </head>
 <body >
 
-<div class="check">
-    <input id="searchLine"  type="search" placeholder="What do you want to cook today?" />
-    <input type="submit" value="No Result" />
-</div>
+<div id="container">
+    <form action="" id="theForm" method="post">
+
+        <div id="logo_searchline_wrapper">
+            <div>
+                <a href ="http://www.cookit.co.il/" > <img id="logo" src="images\logo.jpg"> </a>
+            </div>
+            <!--{{searchString}}-->
+            <!--<div id="myProgressBar">-->
+                <div id="myBar"></div>
+            <!--</div>-->
+            <div class="inline_display">
+                <input type="hidden" id="isContinueSearch" name="isContinueSearch" value="{{isContinueSearch}}" />
+                <input type="hidden" id="searchLine" name="search" value="{{searchString}}" />
+            </div>
+        </div>
+    </form>
+ </div>
+
+<!--//מתי מריץ?-->
+<script>
+    var stopTimeOut = setTimeout(doSearch, 5000);
+    var retries = 0;
+    function doSearch() {
+
+        clearTimeout(stopTimeOut);
+        if (document.getElementById("isContinueSearch").value == "yes") {
+            var postData = $('#theForm').serialize();
+            var formURL = $('#theForm').attr("action");
+            $.ajax(
+                    {
+                        url: formURL,
+                        type: "POST",
+                        data: postData,
+                        success: function (data, textStatus, jqXHR) {
+                            if (data.isSuccess == "false")
+                            {
+                                retries++;
+                                if (retries == 4)
+                                {
+                                    console.log("no results");
+                                    // Not success
+//                                   $("#myProgressBar").append("fail ");
+
+                                }
+                                else {
+//                                    $("#myProgressBar").append("no ");
+                                    $("#myBar").load (move());
+                                    stopTimeOut = setTimeout(doSearch, 10000);
+                                }
+                            }
+                            else
+                            {
+                                document.open();
+                                document.write(data);
+                                document.close();
+                            }
+                            //data: return data from server
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            $("#progress").append("total fail ");
+                            //if fails
+                        }
+                    });
+        }
+    }
+</script>
 
 
-
+<script>
+    function move() {
+        var elem = document.getElementById("myBar");
+        var width = 1;
+        var id = setInterval(frame, 10);
+        function frame() {
+            if (width >= 100) {
+                clearInterval(id);
+            } else {
+                width++;
+                elem.style.width = width + '%';
+            }
+        }
+    }
+</script>
 
 
 </body>

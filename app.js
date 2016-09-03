@@ -36,14 +36,16 @@ app.use('/users', users);
 app.use('/noResult', noResult);
 app.use('/autocomplete',autocomplete);
 
+var flagForRabbit = 0; // 0 if is the first search , otherwise 1
 
   app.post('/', function(req, res, next) {
       var searchString = req.body.search;
+      var isContinueSearch = (req.body.isContinueSearch == "yes");
           //TODO delete links after??
       if (searchString != '') {
            /*Show the search key word in the search box after 'search' button clicked.*/
             req.body.search = searchString;
-          runOperationSearch(searchString, res,function (linksId) {
+          runOperationSearch(searchString, isContinueSearch,res,flagForRabbit,function (linksId) {
               getAllDataFromDbBySearchString(linksId, function (arrayDataResult) {
                   res.render('index', {arrayDataResult: arrayDataResult});
               });
@@ -212,7 +214,7 @@ function getAllDataFromDbBySearchString(linksId,callback) {
 
  }
 
-function runOperationSearch(searchString,res, callback) {
+function runOperationSearch(searchString, isContinueSearch,res,flagForRabbit,callback) {
 
         db.collection('SearchStrings').find({'StringSearch': searchString}).toArray(function (err, docs){
             if (err) throw err;
@@ -221,27 +223,38 @@ function runOperationSearch(searchString,res, callback) {
                 //searching the string in LikeSearchString field
                 db.collection('SearchStrings').find({'LikeSearchString': searchString}).toArray(function (err, docs)
                 {
-                    if (docs.length < 1)
-                    {
+                    if (docs.length < 1) {
                         //send to RabbitMQ the string that was not found in DB
-                        rabbitMqSend(searchString);
-                        //setTimeout(runOperationSearch(searchString,res),30000);
-                        //runOperationSearch(searchString,res);
-                        res.render('noResult');
+                        if (flagForRabbit == 0)
+                        {
+                            rabbitMqSend(searchString);
+                            flagForRabbit = 1;
+                        }
+                        ///what is it?!???
+                        if (isContinueSearch) {
+                            res.json({isSuccess: "false"});
+                        }
+                        else {
+                            res.render('noResult', {isContinueSearch: "yes", searchString: searchString});
+                        }
 
                     }
                     else
                     {
-                        for (var doc in docs) {
-                            var linksId = docs[doc]["Links"];
+                        if (isContinueSearch)
+                        {
+                            res.json({isSuccess: "false"});
                         }
-                        callback(linksId);
+                        else {
+                            for (var doc in docs) {
+                                var linksId = docs[doc]["Links"];
+                            }
+                            callback(linksId);
+                        }
                     }
                 });
                 console.dir("No documents found.");
 
-                //rabbitMqSend(searchString);
-                //res.render('noResult');
          // search the data and introduce the result
             } else {
                 for (var doc in docs) {
