@@ -45,7 +45,7 @@ var flagForRabbit = 0; // 0 if is the first search , otherwise 1
       if (searchString != '') {
            /*Show the search key word in the search box after 'search' button clicked.*/
             req.body.search = searchString;
-          runOperationSearch(searchString, isContinueSearch,res,flagForRabbit,function (linksId) {
+          runOperationSearch(searchString, isContinueSearch,res,function (linksId) {
               getAllDataFromDbBySearchString(linksId, function (arrayDataResult) {
                   res.render('index', {arrayDataResult: arrayDataResult});
               });
@@ -214,7 +214,7 @@ function getAllDataFromDbBySearchString(linksId,callback) {
 
  }
 
-function runOperationSearch(searchString, isContinueSearch,res,flagForRabbit,callback) {
+function runOperationSearch(searchString, isContinueSearch,res,callback) {
 
         db.collection('SearchStrings').find({'StringSearch': searchString}).toArray(function (err, docs){
             if (err) throw err;
