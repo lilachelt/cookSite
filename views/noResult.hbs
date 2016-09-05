@@ -45,17 +45,18 @@
                             if (data.isSuccess == "false")
                             {
                                 retries++;
-                                if (retries == 4)
+                                if (retries == 5)
                                 {
                                     console.log("no results");
                                     // Not success
 //                                   $("#myProgressBar").append("fail ");
+                                    $("#myBar").hide();
 
                                 }
                                 else {
 //                                    $("#myProgressBar").append("no ");
                                     $("#myBar").load (move());
-                                    stopTimeOut = setTimeout(doSearch, 15000);
+                                    stopTimeOut = setTimeout(doSearch, 10000);
                                 }
                             }
                             else

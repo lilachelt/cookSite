@@ -30,7 +30,7 @@ function send(str,callback){
         if(err){
             throw err;
             console.log('Error send to Queue');
-        }
+        }0
         console.log('send callback', arguments);
     });
 
