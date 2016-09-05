@@ -27,6 +27,7 @@
                 <input type="hidden" id="isContinueSearch" name="isContinueSearch" value="{{isContinueSearch}}" />
                 <input type="hidden" id="searchLine" name="search" value="{{searchString}}" />
             </div>
+            <div id = "endSearch"> </div>
         </div>
     </form>
  </div>
@@ -52,14 +53,22 @@
                                 if (retries == 2)
                                 {
                                     console.log("no results");
+                                    //TODO show index page (before showing no result)
                                     // Not success
                                     $("#myBar").hide();
-                                    $("#noResults").show();
+//                                    $("#searchLine").show();
+                                    $("#endSearch").append("NO RESULT ");
+                                    setTimeout(function(){
+                                        window.location = '/';
+                                    }, 2000);
+
+
+
 
                                 }
                                 else {
                                     $("#myBar").load (move());
-                                    stopTimeOut = setTimeout(doSearch, 40000);
+                                    stopTimeOut = setTimeout(doSearch, 10000);
                                 }
                             }
                             else
@@ -71,7 +80,7 @@
                             //data: return data from server
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
-                            $("#progress").append("total fail ");
+                            $("#myBar").append("total fail ");
                             //if fails
                         }
                     });
