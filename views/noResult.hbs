@@ -16,9 +16,13 @@
                 <a href ="http://www.cookit.co.il/" > <img id="logo" src="images\logo.jpg"> </a>
             </div>
             <!--{{searchString}}-->
-            <!--<div id="myProgressBar">-->
-                <div id="myBar"></div>
-            <!--</div>-->
+            <div id="myProgressBar">
+                <div id="myBar">
+                </div>
+            </div>
+            <div id="noResults" type="hidden">
+              <!--<p > Sorry,we have no results for you</p>-->
+            </div>
             <div class="inline_display">
                 <input type="hidden" id="isContinueSearch" name="isContinueSearch" value="{{isContinueSearch}}" />
                 <input type="hidden" id="searchLine" name="search" value="{{searchString}}" />
@@ -28,7 +32,7 @@
  </div>
 
 <script>
-    var stopTimeOut = setTimeout(doSearch, 5000);
+    var stopTimeOut = setTimeout(doSearch, 100);
     var retries = 0;
     function doSearch() {
 
@@ -45,18 +49,17 @@
                             if (data.isSuccess == "false")
                             {
                                 retries++;
-                                if (retries == 5)
+                                if (retries == 2)
                                 {
                                     console.log("no results");
                                     // Not success
-//                                   $("#myProgressBar").append("fail ");
                                     $("#myBar").hide();
+                                    $("#noResults").show();
 
                                 }
                                 else {
-//                                    $("#myProgressBar").append("no ");
                                     $("#myBar").load (move());
-                                    stopTimeOut = setTimeout(doSearch, 10000);
+                                    stopTimeOut = setTimeout(doSearch, 40000);
                                 }
                             }
                             else
@@ -81,7 +84,7 @@
     function move() {
         var elem = document.getElementById("myBar");
         var width = 1;
-        var id = setInterval(frame, 10);
+        var id = setInterval(frame, 1000);
         function frame() {
             if (width >= 100) {
                 clearInterval(id);
@@ -92,6 +95,8 @@
         }
     }
 </script>
+
+
 
 
 </body>

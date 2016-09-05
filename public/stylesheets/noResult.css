@@ -29,13 +29,11 @@ body
 
 #myProgress {
     position: relative;
-    width: 50%;
     height: 30px;
     background-color: grey;
 }
 #myBar {
     position: absolute;
-    width: 20%;
     height: 14%;
     background-color: #ffad36;
     margin: auto;

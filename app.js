@@ -262,7 +262,10 @@ function runOperationSearch(searchString, isContinueSearch,res,callback) {
                 }
                 // Check if links list is Empty --> send to Queue
                 if(!(linksId[0])){
-                    //rabbitMqSend(searchString);
+                    if (flagForRabbit == 0)
+                     {
+                         rabbitMqSend(searchString);
+                     }
                     res.render('noResult');
                 }
                 callback(linksId);
