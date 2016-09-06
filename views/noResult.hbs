@@ -15,9 +15,11 @@
             <div>
                 <a href ="http://www.cookit.co.il/" > <img id="logo" src="images\logo.jpg"> </a>
             </div>
-            <!--{{searchString}}-->
+        </div>
+
             <div id="myProgressBar">
                 <div id="myBar">
+                    <div id="noResultsPercent">1%</div>
                 </div>
             </div>
             <div id="noResults" type="hidden">
@@ -28,7 +30,7 @@
                 <input type="hidden" id="searchLine" name="search" value="{{searchString}}" />
             </div>
             <div id = "endSearch"> </div>
-        </div>
+
     </form>
  </div>
 
@@ -52,23 +54,17 @@
                                 retries++;
                                 if (retries == 5)
                                 {
-                                    console.log("no results");
-                                    //TODO show index page (before showing no result)
                                     // Not success
                                     $("#myBar").hide();
-                                    ///MOR NEW
-//                                    $("#searchLine").show();
-                                    $("#endSearch").append("NO RESULT ");
+                                    $("#endSearch").append("Sorry We Have No Results For you ");
                                     setTimeout(function(){
                                         window.location = '/';
-                                    }, 2000);
-
-
-
+                                    }, 5000);
 
                                 }
                                 else {
-                                    $("#myBar").load (move());
+                                    widthElem=$("#myBar").width();
+                                    $("#myBar").load (move(widthElem));
                                     stopTimeOut = setTimeout(doSearch, 10000);
                                 }
                             }
@@ -91,16 +87,17 @@
 
 
 <script>
-    function move() {
+    function move(widthElem) {
         var elem = document.getElementById("myBar");
-        var width = 1;
+        var width = widthElem;
         var id = setInterval(frame, 1000);
         function frame() {
             if (width >= 100) {
                 clearInterval(id);
             } else {
-                width++;
+                width=width+2;
                 elem.style.width = width + '%';
+                document.getElementById("noResultsPercent").innerHTML = width * 1  + '%';
             }
         }
     }

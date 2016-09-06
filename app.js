@@ -10,6 +10,8 @@ var assert = require('assert');
 var hbs = require('hbs');
 var ObjectID = require('mongodb').ObjectID;
 var db = require('./mongo').getDb();
+var ProgressBar = require('progressbar.js');
+
 
 var routes = require('./routes/index');
 var users = require('./routes/users');

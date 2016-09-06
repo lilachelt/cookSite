@@ -13,7 +13,6 @@ body
 #logo_searchline_wrapper {
     border-color: #0000FF;
     border: 8px;
-    text-align: center;
 }
 
 #logo {
@@ -28,13 +27,35 @@ body
 }
 
 #myProgress {
-    position: relative;
-    height: 30px;
+    position: absolute;
+    height:5%;
+    width: 100%;
     background-color: grey;
+    display: inline-block;
+    border-color: orange;
 }
 #myBar {
-    position: absolute;
-    height: 14%;
-    background-color: #ffad36;
+    direction: rtl;
+    height: 5%;
+    background-color: #ffbe60;
     margin: auto;
+    display: inline-block;
+}
+
+
+/*#progress_container {*/
+    /*margin: 20px;*/
+    /*width: 200px;*/
+    /*height: 200px;*/
+    /*position: relative;*/
+/*}*/
+
+#noResultsPercent
+{
+    position: static;
+    font-family:"tahoma";
+    text-align: center;
+    padding: 0;
+    font-size: 20px;
+    color: white;
 }

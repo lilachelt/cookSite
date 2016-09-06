@@ -119,12 +119,12 @@ a:hover {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: orange;
+    background: #e4e4e4;
     border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: orange;
+    background: #ffad36;
 }
 
 .rating {
