@@ -10,7 +10,7 @@ var assert = require('assert');
 var hbs = require('hbs');
 var ObjectID = require('mongodb').ObjectID;
 var db = require('./mongo').getDb();
-var ProgressBar = require('progressbar.js');
+//var ProgressBar = require('progressbar.js');
 
 
 var routes = require('./routes/index');
@@ -49,7 +49,7 @@ var flagForRabbit = 0; // 0 if is the first search , otherwise 1
             req.body.search = searchString;
           runOperationSearch(searchString, isContinueSearch,res,function (linksId) {
               getAllDataFromDbBySearchString(linksId, function (arrayDataResult) {
-                  res.render('index', {arrayDataResult: arrayDataResult});
+                  res.render('index', {arrayDataResult: arrayDataResult, searchString: searchString});
               });
           });
       }

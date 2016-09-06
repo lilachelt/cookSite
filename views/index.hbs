@@ -15,7 +15,7 @@
         </div>
 
         <div class="inline_display">
-            <input id="searchLine" class="typeahead" type="search" autofocus="autofocus"  dir="rtl"  name="search"  placeholder="מה נרצה להכין היום?" />
+            <input id="searchLine" class="typeahead" type="search" autofocus="autofocus"  value="{{searchString}}"  dir="rtl"  name="search"  placeholder="מה נרצה להכין היום?" />
             <input type="submit" name="theForm" id="cookItButton" value="Cook It" />
 
         </div>
@@ -69,7 +69,7 @@
         console.log('key up',code);
         // block from number(49-57) & english letters & signs
         if (code >= 44 && code <= 122){
-            alert("only hebrew");
+            alert("ניתן לחפש בעברית בלבד!");
             event.preventDefault();
         }
     });

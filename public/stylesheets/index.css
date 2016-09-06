@@ -24,8 +24,21 @@ body
     width: 61em;
     margin: auto;
     height: 1.9em;
-}
+    mergine: 20px;
 
+}
+#cookItButton
+{
+    mergine: 30px;
+    width: 7em;
+    text-align: center;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: Tahoma;
+    border: 2px solid dimgrey;
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+
+}
 /*.typeahead {*/
     /*width: 61em;*/
 /*}*/

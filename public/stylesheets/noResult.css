@@ -42,7 +42,14 @@ body
     display: inline-block;
 }
 
+#endSearch{
+    margin: 15px;
+    font-family: Tahoma;
+    font-size: large;
+    text-align: center;
+    color: #0000FF;
 
+}
 /*#progress_container {*/
     /*margin: 20px;*/
     /*width: 200px;*/
