@@ -264,13 +264,14 @@ function runOperationSearch(searchString, isContinueSearch,res,callback) {
                 }
                 // Check if links list is Empty --> send to Queue
                 if(!(linksId[0])){
+
                     if (flagForRabbit == 0)
                      {
                          rabbitMqSend(searchString);
                      }
-                    res.render('noResult');
+                    res.render('noResult',{noResults:"Sorry, We Have No Results For you"});
                 }
-                callback(linksId);
+             callback(linksId);
             }
 
         });

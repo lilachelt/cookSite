@@ -19,17 +19,16 @@
 
             <div id="myProgressBar">
                 <div id="myBar">
-                    <div id="noResultsPercent">1%</div>
+                    <div id="noResultsPercent"></div>
                 </div>
             </div>
             <div id="noResults" type="hidden">
-              <!--<p > Sorry,we have no results for you</p>-->
-            </div>
+              </div>
             <div class="inline_display">
                 <input type="hidden" id="isContinueSearch" name="isContinueSearch" value="{{isContinueSearch}}" />
                 <input type="hidden" id="searchLine" name="search" value="{{searchString}}" />
             </div>
-            <div id = "endSearch"> </div>
+            <div id = "endSearch">{{noResults}} </div>
 
     </form>
  </div>
@@ -52,11 +51,11 @@
                             if (data.isSuccess == "false")
                             {
                                 retries++;
-                                if (retries == 2)
+                                if (retries == 5)
                                 {
                                     // Not success
                                     $("#myBar").hide();
-                                    $("#endSearch").append("Sorry We Have No Results For you ");
+                                    $("#endSearch").append("Sorry, We Have No Results For you ");
                                     setTimeout(function(){
                                         window.location = '/';
                                     }, 5000);
