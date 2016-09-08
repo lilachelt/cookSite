@@ -21,7 +21,7 @@ body
 }
 
 #searchLine {
-    width: 80em;
+    width: 100%;
     margin: auto;
     height: 1.9em;
     mergine: 20px;
@@ -62,13 +62,14 @@ body
     background-color: #666666;
 }
 
-.result-box .item {
+.result-box {
     border-color: #0000FF;
     border: 15px;
     text-align: center;
     background-color:white;
     font-family: "Berlin Sans FB";
 }
+
 a /* links*/
 {
     direction:rtl;
@@ -290,6 +291,7 @@ a:hover {
     line-height: 1.5;
     border-radius: 3px;
 }
+
 select.input-group.input-group-sm .twitter-typeahead .tt-input,
 select.input-group.input-group-sm .twitter-typeahead .tt-hint {
     height: 30px;
