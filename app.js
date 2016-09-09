@@ -40,6 +40,8 @@ app.use('/autocomplete',autocomplete);
 
 var flagForRabbit = 0; // 0 if is the first search , otherwise 1
 
+
+
   app.post('/', function(req, res, next) {
       var searchString = req.body.search;
       var isContinueSearch = (req.body.isContinueSearch == "yes");
@@ -49,6 +51,7 @@ var flagForRabbit = 0; // 0 if is the first search , otherwise 1
             req.body.search = searchString;
           runOperationSearch(searchString, isContinueSearch,res,function (linksId) {
               getAllDataFromDbBySearchString(linksId, function (arrayDataResult) {
+                  flagForRabbit = 0; // 0 if is the first search , otherwise 1
                   res.render('index', {arrayDataResult: arrayDataResult, searchString: searchString});
               });
           });
@@ -258,21 +261,23 @@ function runOperationSearch(searchString, isContinueSearch,res,callback) {
                 console.dir("No documents found.");
 
          // search the data and introduce the result
-            } else {
+            }
+            else {
                 for (var doc in docs) {
                     var linksId = docs[doc]["Links"];
                 }
                 // Check if links list is Empty --> send to Queue
-                if(!(linksId[0])){
+                // if(!(linksId[0])){
+                //     if (flagForRabbit==0)
+                //     {
+                //         rabbitMqSend(searchString);
+                //         flagForRabbit = 1;
+                //     }
+                  //  res.render('noResult',{noResults:"Sorry, We Have No Results For you"});
+                //}
 
-                    if (flagForRabbit == 0)
-                     {
-                         rabbitMqSend(searchString);
-                     }
-                    res.render('noResult',{noResults:"Sorry, We Have No Results For you"});
-                }
-             callback(linksId);
-            }
+            callback(linksId);
+           }
 
         });
 }
