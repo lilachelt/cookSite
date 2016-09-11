@@ -246,7 +246,6 @@ function runOperationSearch(searchString, isContinueSearch,res,callback) {
                             map[searchString] = 1;
                             rabbitMqSend(searchString);
                         }
-                        ///what is it?!???
                         if (isContinueSearch) {
                             res.json({isSuccess: "false"});
                         }
