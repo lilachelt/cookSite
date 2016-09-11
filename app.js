@@ -61,7 +61,7 @@ var map = {};
           runOperationSearch(searchString, isContinueSearch,res,function (linksId) {
               getAllDataFromDbBySearchString(linksId, function (arrayDataResult) {
                   res.render('index', {arrayDataResult: arrayDataResult, searchString: searchString});
-                  map.delete(searchString);
+                 // map.delete(searchString);
               });
           });
       }
@@ -230,65 +230,32 @@ function getAllDataFromDbBySearchString(linksId,callback) {
 
 function runOperationSearch(searchString, isContinueSearch,res,callback) {
 
-        db.collection('SearchStrings').find({'StringSearch': searchString}).toArray(function (err, docs){
-            if (err) throw err;
+    db.collection('SearchStrings').find
+    ({$or :[{'StringSearch': searchString},{'LikeSearchString': {$in: [searchString]}}]}).toArray(function (err, docs) {
+        if (err) throw err;
 
-            if (docs.length < 1) {
-                //searching the string in LikeSearchString field
-                db.collection('SearchStrings').find({'LikeSearchString': {$in: [searchString]}}).toArray(function (err, docs)
-                {
-                    if (docs.length < 1) {
-                        //send to RabbitMQ the string that was not found in DB
-                        console.log(map[searchString]);
-                        if (map[searchString] == 0)
-                        {
-                            map[searchString] = 1;
-                            rabbitMqSend(searchString);
-                        }
-                        if (isContinueSearch) {
-                            res.json({isSuccess: "false"});
-                        }
-                        else {
-                            res.render('noResult', {isContinueSearch: "yes", searchString: searchString});
-                        }
-
-                    }
-                    else
-                    {
-                        if (isContinueSearch)
-                        {
-                            res.json({isSuccess: "false"});
-                        }
-                        else {
-                            for (var doc in docs) {
-                                var linksId = docs[doc]["Links"];
-                            }
-                            callback(linksId);
-                        }
-                    }
-                });
-                console.dir("No documents found.");
-
-         // search the data and introduce the result
+        if (docs.length < 1) {
+            //send to RabbitMQ the string that was not found in DB
+            if (map[searchString] == 0) {
+                map[searchString] = 1;
+                rabbitMqSend(searchString);
+            }
+            if (isContinueSearch) {
+                res.json({isSuccess: "false"});
             }
             else {
+                res.render('noResult', {isContinueSearch: "yes", searchString: searchString});
+            }
+        }
+        else {
                 for (var doc in docs) {
                     var linksId = docs[doc]["Links"];
                 }
-                // Check if links list is Empty --> send to Queue
-                // if(!(linksId[0])){
-                //     if (flagForRabbit==0)
-                //     {
-                //         rabbitMqSend(searchString);
-                //         flagForRabbit = 1;
-                //     }
-                  //  res.render('noResult',{noResults:"Sorry, We Have No Results For you"});
-                //}
+                callback(linksId);
+            }
 
-            callback(linksId);
-           }
-
-        });
+    });
 }
+
 
 
