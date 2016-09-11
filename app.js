@@ -236,7 +236,7 @@ function runOperationSearch(searchString, isContinueSearch,res,callback) {
 
             if (docs.length < 1) {
                 //searching the string in LikeSearchString field
-                db.collection('SearchStrings').find({'LikeSearchString': searchString}).toArray(function (err, docs)
+                db.collection('SearchStrings').find({'LikeSearchString': {$in: [searchString]}}).toArray(function (err, docs)
                 {
                     if (docs.length < 1) {
                         //send to RabbitMQ the string that was not found in DB
