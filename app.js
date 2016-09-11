@@ -60,9 +60,8 @@ var map = {};
             req.body.search = searchString;
           runOperationSearch(searchString, isContinueSearch,res,function (linksId) {
               getAllDataFromDbBySearchString(linksId, function (arrayDataResult) {
-                  map[searchString] = 0;
-                  //flagForRabbit = 0; // 0 if is the first search , otherwise 1
                   res.render('index', {arrayDataResult: arrayDataResult, searchString: searchString});
+                  map.delete(searchString);
               });
           });
       }
