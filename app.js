@@ -39,11 +39,20 @@ app.use('/noResult', noResult);
 app.use('/autocomplete',autocomplete);
 
 var flagForRabbit = 0; // 0 if is the first search , otherwise 1
-
+var map = {};
 
 
   app.post('/', function(req, res, next) {
       var searchString = req.body.search;
+      if(map[searchString] != null)
+      {
+          map[searchString] = 1;
+      }
+      else
+      {
+          map[searchString] = 0;
+      }
+
       var isContinueSearch = (req.body.isContinueSearch == "yes");
           //TODO delete links after??
       if (searchString != '') {
@@ -51,7 +60,8 @@ var flagForRabbit = 0; // 0 if is the first search , otherwise 1
             req.body.search = searchString;
           runOperationSearch(searchString, isContinueSearch,res,function (linksId) {
               getAllDataFromDbBySearchString(linksId, function (arrayDataResult) {
-                  flagForRabbit = 0; // 0 if is the first search , otherwise 1
+                  map[searchString] = 0;
+                  //flagForRabbit = 0; // 0 if is the first search , otherwise 1
                   res.render('index', {arrayDataResult: arrayDataResult, searchString: searchString});
               });
           });
@@ -230,10 +240,11 @@ function runOperationSearch(searchString, isContinueSearch,res,callback) {
                 {
                     if (docs.length < 1) {
                         //send to RabbitMQ the string that was not found in DB
-                        if (flagForRabbit == 0)
+                        console.log(map[searchString]);
+                        if (map[searchString] == 0)
                         {
+                            map[searchString] = 1;
                             rabbitMqSend(searchString);
-                            flagForRabbit = 1;
                         }
                         ///what is it?!???
                         if (isContinueSearch) {
