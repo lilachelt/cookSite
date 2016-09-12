@@ -235,17 +235,17 @@ function mergeArraysToOneArray(searchString, includeSign, ingWord, titlesUrlsArr
 
     if(mapIncludeSign[searchString] != null)
     {
-        mapIncludeSign[searchString] = null;
+        delete mapIncludeSign[searchString];
     }
 
     if(mapIngWord[searchString] != null)
     {
-        mapIngWord[searchString] = null;
+        delete mapIngWord[searchString];
     }
 
     if(map[searchString] != null)
     {
-        map[searchString] = null;
+        delete map[searchString];
     }
 
     if(arrResult.length > i)
