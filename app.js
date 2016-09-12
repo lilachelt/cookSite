@@ -55,8 +55,11 @@ var mapIncludeSign = {};
           {
               searchString = searchString.substr(0,searchString.length-1);
           }
-          mapIngWord[searchString] = words[1].replace(" ","");
-          mapIncludeSign[searchString] = "+";
+          if(words[1] != null)
+          {
+              mapIngWord[searchString] = words[1].replace(/\s/g, '');
+              mapIncludeSign[searchString] = "+";
+          }
       }
       if (searchString.indexOf("-") != -1)
       {
@@ -66,8 +69,11 @@ var mapIncludeSign = {};
           {
               searchString = searchString.substr(0,searchString.length-1);
           }
-          mapIngWord[searchString] = words[1].replace(" ","");
-          mapIncludeSign[searchString] = "-";
+          if(words[1] != null)
+          {
+              mapIngWord[searchString] = words[1].replace(/\s/g, '');
+              mapIncludeSign[searchString] = "-";
+          }
       }
 
       if(map[searchString] != null)
