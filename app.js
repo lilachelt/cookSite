@@ -50,26 +50,26 @@ var map = {};
       if (searchString.indexOf("+") != -1)
       {
           var words = searchString.split("+");
-          searchString = words[0];
-          if(searchString[searchString.length-1]==" ")
+          var searchStringSign = words[0];
+          if(searchStringSign[searchStringSign.length-1]==" ")
           {
-              searchString = searchString.substr(0,searchString.length-1);
+              searchStringSign = searchStringSign.substr(0,searchStringSign.length-1);
           }
-          var ingWord = words[1].replace(" ","");
+          ingWord = words[1].replace(" ","");
           includeSign = "+";
       }
       if (searchString.indexOf("-") != -1)
       {
           var words = searchString.split("-");
-          searchString = words[0];
-          if(searchString[searchString.length]==" ")
+          var searchStringSign = words[0];
+          if(searchStringSign[searchStringSign.length-1]==" ")
           {
-              searchString = searchString.substr(0,searchString.length-1);
+              searchStringSign = searchStringSign.substr(0,searchStringSign.length-1);
           }
-          var ingWord = words[1].replace(" ","");
+          ingWord = words[1].replace(" ","");
           includeSign = "-";
       }
-
+      
       if(map[searchString] != null)
       {
           map[searchString] = 1;
@@ -83,7 +83,7 @@ var map = {};
           //TODO delete links after??
       if (searchString != '') {
            /*Show the search key word in the search box after 'search' button clicked.*/
-            req.body.search = searchString;
+            //req.body.search = searchString;
           runOperationSearch(searchString, isContinueSearch,res,function (linksId) {
               getAllDataFromDbBySearchString(linksId, includeSign, ingWord, function (arrayDataResult) {
                   res.render('index', {arrayDataResult: arrayDataResult, searchString: searchString});
