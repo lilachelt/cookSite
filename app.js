@@ -200,18 +200,24 @@ function mergeArraysToOneArray(searchString, includeSign, ingWord, titlesUrlsArr
                 var ind = ingredientsNamesArr[j].indexOf(ingWord);
                 if(includeSign=="+")
                 {
-                    if(ind == -1 || ingredientsNamesArr[j].length == 0){
+                    console.log(ingredientsNamesArr[j]);
+                    if(ind == -1){
                         continue;
                     }
                 }
                 else if(includeSign=="-")
                 {
-                    if(ind != -1 || ingredientsNamesArr[j].length == 0){
+                    console.log(ingredientsNamesArr[j]);
+                    if(ind != -1){
                         continue;
                     }
                 }
             }
+            else{
+                continue;
+            }
         }
+
         arrResult[i] = new Array(5);
         arrResult[i][0] = titlesUrlsArr[j];
         arrResult[i][1] = linksUrlsArr[j];
