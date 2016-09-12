@@ -17,92 +17,107 @@
             </div>
         </div>
 
-            <div id="myProgressBar">
-                <div id="myBar">
-                    <div id="noResultsPercent"></div>
-                </div>
+        <div id="myProgressBar">
+            <div id="myBar">
+                <div id="noResultsPercent"></div>
             </div>
-            <div id="noResults" type="hidden">
-              </div>
-            <div class="inline_display">
-                <input type="hidden" id="isContinueSearch" name="isContinueSearch" value="{{isContinueSearch}}" />
-                <input type="hidden" id="searchLine" name="search" value="{{searchString}}" />
-            </div>
-            <div id = "endSearch">{{noResults}} </div>
+        </div>
+        <div id="noResults" type="hidden">
+        </div>
+        <div class="inline_display">
+            <input type="hidden" id="isContinueSearch" name="isContinueSearch" value="{{isContinueSearch}}" />
+            <input type="hidden" id="searchLine" name="search" value="{{searchString}}" />
+        </div>
+        <div id = "endSearch">{{noResults}} </div>
 
     </form>
- </div>
+</div>
 
 <script>
     var stopTimeOut = setTimeout(doSearch, 100);
     var retries = 0;
-    function doSearch() {
+    val = 0
 
+    function doSearch() {
         clearTimeout(stopTimeOut);
         if (document.getElementById("isContinueSearch").value == "yes") {
             var postData = $('#theForm').serialize();
             var formURL = $('#theForm').attr("action");
-            $.ajax(
-                    {
-                        url: formURL,
-                        type: "POST",
-                        data: postData,
-                        success: function (data, textStatus, jqXHR) {
-                            if (data.isSuccess == "false")
-                            {
-                                retries++;
-                                if (retries == 5)
-                                {
-                                    // Not success
-                                    $("#myBar").hide();
-                                    $("#endSearch").append("מצטערים, לא נמצאו תוצאות. אנא נסה במועד מאוחר יותר ");
-                                    setTimeout(function(){
-                                        window.location = '/';
-                                    }, 5000);
+            $.ajax({
+                url: formURL,
+                type: "POST",
+                data: postData,
+                success: function (data, textStatus, jqXHR) {
+                    if (data.isSuccess == "false") {
+                        retries++;
 
-                                }
-                                else {
-                                    widthElem=$("#myBar").width();
-                                    $("#myBar").load (move(widthElem));
-                                    stopTimeOut = setTimeout(doSearch, 10000);
-                                }
-                            }
-                            else
-                            {
-                                document.open();
-                                document.write(data);
-                                document.close();
-                            }
-                            //data: return data from server
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            //if fails
+                        if (retries == 5) {
+                            // Not success
+                            val = val + 20;
+                            spinerLoad(val, function callback() {
+                                setTimeout(function() {
+                                    $("cont").hide();
+                                    $("#endSearch").append("מצטערים, לא נמצאו תוצאות. אנא נסה במועד מאוחר יותר ");
+                                }, 2000);
+
+                                setTimeout(function(){
+                                    window.location = '/';
+                                }, 5000);
+                            });
+                        } else {
+                            val = val + 20;
+                            spinerLoad(val, function callback() {
+                                stopTimeOut = setTimeout(doSearch, 10000);
+                            });
                         }
-                    });
+
+                    } else {
+                        document.open();
+                        document.write(data);
+                        document.close();
+                    }
+                    //data: return data from server
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $("#myBar").append("total fail ");
+                    //if fails
+                }
+            });
         }
     }
 </script>
 
+<div id="cont" data-pct="0">
+    <svg id="svg" width="200" height="200" viewPort="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <circle r="90" cx="100" cy="100" fill="transparent" stroke-dasharray="565.48" stroke-dashoffset="0"></circle>
+        <circle id="bar" r="90" cx="100" cy="100" fill="transparent" stroke-dasharray="565.48" stroke-dashoffset="0"></circle>
+    </svg>
+</div>
 
 <script>
-    function move(widthElem) {
-        var elem = document.getElementById("myBar");
-        var width = widthElem;
-        var id = setInterval(frame, 1000);
-        function frame() {
-            if (width >= 100) {
-                clearInterval(id);
-            } else {
-                width=width+2;
-                elem.style.width = width + '%';
-                document.getElementById("noResultsPercent").innerHTML = width * 1  + '%';
-            }
+    function spinerLoad(val, callback) {
+        var $circle = $('#svg #bar');
+
+        if (isNaN(val)) {
+            val = 100;
+        }
+        else{
+            var r = $circle.attr('r');
+            var c = Math.PI*(r*2);
+
+            if (val < 0) { val = 0;}
+            if (val > 100) { val = 100;}
+
+            var pct = ((100-val)/100)*c;
+
+            $circle.css({ strokeDashoffset: pct});
+
+            $('#cont').attr('data-pct',val);
+
+            callback();
         }
     }
 </script>
-
-
-
 
 </body>
 </html>
