@@ -14,8 +14,8 @@
         </div>
 
         <div class="inline_display">
-            <input id="searchLine" class="typeahead" type="search" autofocus="autofocus"  value="{{searchString}}"  dir="rtl"  name="search"  placeholder="מה תרצה להכין היום?" />
-            <input type="submit" name="theForm" id="cookItButton" value="Cook It" />
+            <input id="searchLine" title="להוספת/הורדת רכיב בודד ממתכון הוסף +/-" class="typeahead" type="search" autofocus="autofocus"  value="{{searchString}}"  dir="rtl"  name="search"  placeholder="מה תרצו להכין היום? " />
+            <input type="submit" title="להוספת/הורדת רכיב בודד ממתכון הוסף +/-" name="theForm" id="cookItButton" value="Cook It" />
 
         </div>
     </div>
@@ -31,7 +31,7 @@
 
             <div class="box-entry">
                 <h2><a target="_blank" href="{{this.[1]}}">{{this.[0]}}</a></h2>
-                <div class="rating rate-4"> </div>
+                <!--<div class="rating rate-4"> </div>-->
 
                 <h3 class="tahomaFont_center inline_block_display">מצרכים</h3>
 
@@ -64,7 +64,7 @@
         var code = event.keyCode || event.which;
         console.log('key up',code);
         // block from number(49-57) & english letters & signs
-        if (code >= 44 && code <= 122){
+        if (code >= 46 && code <= 122){
             alert("ניתן לחפש בעברית בלבד!");
             event.preventDefault();
         }
