@@ -40,36 +40,36 @@ app.use('/autocomplete',autocomplete);
 
 var flagForRabbit = 0; // 0 if is the first search , otherwise 1
 var map = {};
+var mapIngWord = {};
+var mapIncludeSign = {};
 
 
   app.post('/', function(req, res, next) {
       var searchString = req.body.search;
-      var ingWord = null;
-      var includeSign = null;
 
       if (searchString.indexOf("+") != -1)
       {
           var words = searchString.split("+");
-          var searchStringSign = words[0];
-          if(searchStringSign[searchStringSign.length-1]==" ")
+          var searchString = words[0];
+          if(searchString[searchString.length-1]==" ")
           {
-              searchStringSign = searchStringSign.substr(0,searchStringSign.length-1);
+              searchString = searchString.substr(0,searchString.length-1);
           }
-          ingWord = words[1].replace(" ","");
-          includeSign = "+";
+          mapIngWord[searchString] = words[1].replace(" ","");
+          mapIncludeSign[searchString] = "+";
       }
       if (searchString.indexOf("-") != -1)
       {
           var words = searchString.split("-");
-          var searchStringSign = words[0];
-          if(searchStringSign[searchStringSign.length-1]==" ")
+          var searchString = words[0];
+          if(searchString[searchString.length-1]==" ")
           {
-              searchStringSign = searchStringSign.substr(0,searchStringSign.length-1);
+              searchString = searchString.substr(0,searchString.length-1);
           }
-          ingWord = words[1].replace(" ","");
-          includeSign = "-";
+          mapIngWord[searchString] = words[1].replace(" ","");
+          mapIncludeSign[searchString] = "-";
       }
-      
+
       if(map[searchString] != null)
       {
           map[searchString] = 1;
@@ -85,7 +85,7 @@ var map = {};
            /*Show the search key word in the search box after 'search' button clicked.*/
             //req.body.search = searchString;
           runOperationSearch(searchString, isContinueSearch,res,function (linksId) {
-              getAllDataFromDbBySearchString(linksId, includeSign, ingWord, function (arrayDataResult) {
+              getAllDataFromDbBySearchString(searchString, linksId, mapIncludeSign[searchString],  mapIngWord[searchString], function (arrayDataResult) {
                   res.render('index', {arrayDataResult: arrayDataResult, searchString: searchString});
               });
           });
@@ -189,7 +189,7 @@ function buildItemsDetailsArray(db, itemsIdsArr,collectionName,searchParam, call
     }
 }
 
-function mergeArraysToOneArray(includeSign, ingWord, titlesUrlsArr, linksUrlsArr,LinksImages,ingredientsNamesArr ,TagsNamesArr,callback) {
+function mergeArraysToOneArray(searchString, includeSign, ingWord, titlesUrlsArr, linksUrlsArr,LinksImages,ingredientsNamesArr ,TagsNamesArr,callback) {
 
     var arrResult = new Array(linksUrlsArr.length);
 
@@ -200,13 +200,13 @@ function mergeArraysToOneArray(includeSign, ingWord, titlesUrlsArr, linksUrlsArr
                 var ind = ingredientsNamesArr[j].indexOf(ingWord);
                 if(includeSign=="+")
                 {
-                    if(ind == -1){
+                    if(ind == -1 || ingredientsNamesArr[j].length == 0){
                         continue;
                     }
                 }
                 else if(includeSign=="-")
                 {
-                    if(ind != -1){
+                    if(ind != -1 || ingredientsNamesArr[j].length == 0){
                         continue;
                     }
                 }
@@ -219,6 +219,21 @@ function mergeArraysToOneArray(includeSign, ingWord, titlesUrlsArr, linksUrlsArr
         arrResult[i][3] = ingredientsNamesArr[j];
         arrResult[i][4] = TagsNamesArr[j];
         i++;
+    }
+
+    if(mapIncludeSign[searchString] != null)
+    {
+        mapIncludeSign[searchString] = null;
+    }
+
+    if(mapIngWord[searchString] != null)
+    {
+        mapIngWord[searchString] = null;
+    }
+
+    if(map[searchString] != null)
+    {
+        map[searchString] = null;
     }
 
     if(arrResult.length > i)
@@ -236,7 +251,7 @@ function mergeArraysToOneArray(includeSign, ingWord, titlesUrlsArr, linksUrlsArr
     }
 }
 
-function getAllDataFromDbBySearchString(linksId, includeSign, ingWord, callback) {
+function getAllDataFromDbBySearchString(searchString, linksId, includeSign, ingWord, callback) {
     /**
      * get all the titles using links ID from collection 'Links'
      */
@@ -267,7 +282,7 @@ function getAllDataFromDbBySearchString(linksId, includeSign, ingWord, callback)
                                 /**
                                  * merge all the data to one big array in order to display it to web page
                                  */
-                                mergeArraysToOneArray(includeSign, ingWord, titlesUrlsArr, linksUrlsArr, LinksImages, ingredientsNames ,tagsNamesArr ,function (arrayDataResult) {
+                                mergeArraysToOneArray(searchString, includeSign, ingWord, titlesUrlsArr, linksUrlsArr, LinksImages, ingredientsNames ,tagsNamesArr ,function (arrayDataResult) {
                                     callback(arrayDataResult);
                                     return arrayDataResult;
 
