@@ -1,6 +1,3 @@
-/**
- * Created by mor.schwartz on 04/08/2016.
- */
 const express = require('express');
 var amqp = require('amqplib/callback_api');
 

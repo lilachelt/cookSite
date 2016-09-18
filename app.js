@@ -10,7 +10,6 @@ var assert = require('assert');
 var hbs = require('hbs');
 var ObjectID = require('mongodb').ObjectID;
 var db = require('./mongo').getDb();
-//var ProgressBar = require('progressbar.js');
 
 
 var routes = require('./routes/index');
@@ -25,8 +24,6 @@ var rabbitMqSend = require('./send').send;
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -89,7 +86,6 @@ var mapIncludeSign = {};
           //TODO delete links after??
       if (searchString != '') {
            /*Show the search key word in the search box after 'search' button clicked.*/
-            //req.body.search = searchString;
           runOperationSearch(searchString, isContinueSearch,res,function (linksId) {
               getAllDataFromDbBySearchString(searchString, linksId, mapIncludeSign[searchString],  mapIngWord[searchString], function (arrayDataResult) {
                   res.render('index', {arrayDataResult: arrayDataResult, searchString: searchString});
